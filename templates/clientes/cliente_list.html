@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Clientes</title>
+</head>
+<body>
+
+<h1>Lista de Clientes</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>E-mail</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cliente in clientes %}
+        <tr>
+            <td>{{ cliente.nm_cliente }}</td>
+            <td>{{ cliente.nr_cpf }}</td>
+            <td>{{ cliente.email }}</td>
+            <td>
+                <a href="{% url 'cliente_detail' cliente.pk %}">Detalhes</a> |
+                <a href="{% url 'cliente_update' cliente.pk %}">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'cliente_create' %}">Novo Cliente</a>
+
+
+</body>
+</html>

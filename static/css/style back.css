@@ -1,0 +1,260 @@
+/* Tipografia e Cores Gerais */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #dbe0e6; 
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  color: #333; /* Texto neutro */
+  margin: 0;
+  padding: 0;
+  font-size: 12px; /* Define o tamanho base da fonte */
+  line-height: 1; /* Melhora o espaçamento entre linhas */
+}
+
+h1 {
+  font-size: 1rem; /* Reduz proporcionalmente */
+  color: #0056b3; /* Azul profissional */
+}
+
+h4 {
+  font-size: 1rem; /* Tamanho menor para h4 */
+  color: #0056b3; /* Azul profissional */
+}
+
+/* Sidebar */
+#sidebar {
+  width: 200px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #182c42; /* Fundo azul escuro */
+  backdrop-filter: blur(7px); /* Desfoca o fundo */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  color: #ffffff; /* Texto branco */
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  z-index: 1000;
+}
+
+#sidebar .logo {
+  max-width: 100px;
+}
+
+#sidebar .nav-link {
+  font-size: 0.9rem; /* Ajuste do tamanho */
+  margin-bottom: 8px;
+  color: #ffffff; /* Texto branco */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#sidebar .nav-link:hover {
+  background-color: #004494; /* Azul mais escuro no hover */
+  color: #ffffff; /* Mantém o texto branco */
+}
+
+#sidebar .btn-danger {
+  font-size: 0.9rem;
+  background-color: #dc3545;
+  border: none;
+  color: #ffffff; /* Texto branco */
+}
+
+#sidebar .btn-danger:hover {
+  background-color: #b52a36;
+}
+
+/* Recuo das sub-opções */
+#gestaoMenu .nav-link {
+  font-size: 0.85rem; /* Menor para sub-opções */
+  color: #ffffff; /* Texto branco */
+}
+
+#gestaoMenu .nav-link:hover {
+  color: #ffcc00; /* Texto amarelo no hover */
+}
+
+/* Conteúdo Principal */
+#main-content {
+  margin-left: 220px; /* Espaço para o sidebar */
+  padding: 20px;
+  width: calc(100% - 220px); /* Ocupa o restante da largura */
+  min-height: 100vh; /* Altura total da tela */
+  overflow: hidden; /* Remove qualquer barra desnecessária */
+  box-sizing: border-box;
+}
+
+.search-bar .form-control {
+  border-radius: 25px;
+  font-size: 0.9rem; /* Reduz o tamanho do texto no campo de busca */
+}
+
+.search-bar .btn {
+  font-size: 0.9rem; /* Reduz o texto no botão de busca */
+  border-radius: 25px;
+}
+
+/* Tabelas */
+table, th, td {
+  border-collapse: collapse;
+  padding: .5rem;
+  border: none;
+  
+}
+
+main.table {
+  width: 82vw;
+  height: auto;
+  background-color: rgba(255, 255, 255, 0.097);
+  backdrop-filter: blur(7px);
+  box-shadow: 0 .4rem .8rem #0005;
+  border-radius: .8rem;
+  overflow: hidden;
+  padding: 0;
+}
+
+.table__body {
+  width: 99%;
+  max-height: calc(89% - .8rem);
+  background-color: #ffffff;
+  margin: .8rem auto;
+  border-radius: .6rem;
+  overflow: auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
+
+}
+
+.table__body::-webkit-scrollbar {
+  width: .5rem;
+  height: .5rem;
+}
+
+.table__body::-webkit-scrollbar-thumb {
+  border-radius: .5rem;
+  background-color: #0004;
+  visibility: visible;
+}
+
+.table {
+  width: 100%;
+  margin-top: 0;
+
+}
+
+.table thead th {
+  background-color: #e1dee6fe;
+  color: rgb(0, 0, 0);
+  border-bottom: none;
+  padding: 1rem 1rem;
+  
+
+}
+
+tbody tr:nth-child(even) {
+  background-color: #0000000f;
+}
+
+tbody tr:hover {
+  background-color: #fff6;
+}
+
+
+/* Estilos de Formulários */
+.form-floating .form-select label{
+  font-size: 0.75rem;
+  color: #575353;
+  background-color: transparent;
+}
+
+.form-floating label{
+  font-size: 0.75rem;
+  color: #575353;
+  background-color: transparent;
+}
+
+.form-floating .form-control {
+  border-radius: 0px;
+  font-size: 0.8rem;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: #164773 2px thick;
+  outline: none;
+  background-color: transparent;
+  color: #575353;
+
+}
+
+.form-floating .form-select {
+  border-radius: 0px;
+  font-size: 0.8rem;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: #164773 2px thick;
+  outline: none;
+  background-color: transparent;
+  color: #575353;
+
+}
+
+/* Estilo para os campos ao focar */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus,
+input[type="tel"]:focus,
+textarea:focus,
+select:focus {
+    border-bottom: 2px solid #164773 !important; /* Borda mais espessa ao focar */
+    outline: none !important; /* Remove o contorno azul padrão */
+    box-shadow: none !important; /* Remove qualquer sombra residual */
+    
+}
+
+/* Ajustes Responsivos */
+@media (max-width: 768px) {
+  #sidebar {
+    width: 200px; /* Reduz a largura do sidebar */
+  }
+
+  #main-content {
+    margin-left: 220px; /* Ajusta o recuo do conteúdo principal */
+  }
+
+  .search-bar .form-control {
+    font-size: 0.8rem; /* Texto menor em telas menores */
+  }
+
+  .search-bar .btn {
+    font-size: 0.8rem; /* Texto menor no botão em telas menores */
+  }
+}
+
+.card-formulario {
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 15px;
+  border: none;
+  /*background-color: white;*/
+  background: white;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Ajuste do container do dashboard */
+#dashboard-container {
+  width: calc(100% - 40px); /* Considera padding/margens do conteúdo */
+  height: calc(100vh - 100px); /* Altura total menos a altura do cabeçalho */
+  margin: 0 auto; /* Centraliza horizontalmente */
+  padding: 20px;
+  background-color: #f5f7fa; /* Fundo claro */
+  overflow-y: auto; /* Adiciona barra de rolagem se necessário */
+  box-sizing: border-box;
+}
