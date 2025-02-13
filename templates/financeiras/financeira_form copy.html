@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form method="post" class="row g-1">
+    {% csrf_token %}
+
+    <!-- ========== DADOS DA FINANCEIRA ========== -->
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title" style="margin-bottom: 20px;">Dados da Financeira</h2>
+            <div class="row g-1 mb-2">
+                <div class="col-md-6">
+                    {{ financeira_form.nome_financeira|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ financeira_form.cnpj|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== DEPARTAMENTOS ========== -->
+    <div class="card" style="margin-top: 20px;">
+        <div class="card-body">
+            <h3 class="card-title" style="margin-bottom: 20px;">Departamentos</h3>
+
+            <!-- Management form do departamento_formset -->
+            {{ departamento_formset.management_form }}
+
+            <!-- Form invisível base para clonagem -->
+            <div class="row g-1 mb-2 empty-departamento-form" style="display: none;">
+                <!-- Aqui usamos o empty_form do formset -->
+                {{ departamento_formset.empty_form.id }}
+                <div class="col-md-3">
+                    {{ departamento_formset.empty_form.nome_departamento|as_crispy_field }}
+                </div>
+                <div class="col-md-3">
+                    {{ departamento_formset.empty_form.telefone_fixo|as_crispy_field }}
+                </div>
+                <div class="col-md-3">
+                    {{ departamento_formset.empty_form.celular|as_crispy_field }}
+                </div>
+                <div class="col-md-3">
+                    {{ departamento_formset.empty_form.email|as_crispy_field }}
+                </div>
+            </div>
+
+            <div id="departamentos-container">
+                {% for form in departamento_formset %}
+                <div class="row g-1 mb-2">
+                    {{ form.id }}
+                    <div class="col-md-3">
+                        {{ form.nome_departamento|as_crispy_field }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.telefone_fixo|as_crispy_field }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.celular|as_crispy_field }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.email|as_crispy_field }}
+                    </div>
+                    <!-- Se can_delete=True, você pode exibir form.DELETE aqui -->
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-departamento" class="btn btn-secondary btn-sm">
+                Adicionar Departamento
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== PRODUTOS ========== -->
+    <div class="card" style="margin-top: 20px;">
+        <div class="card-body">
+            <h3 class="card-title" style="margin-bottom: 20px;">Produtos</h3>
+
+            {{ produto_formset.management_form }}
+
+            <!-- Form invisível base para clonagem -->
+            <div class="row g-1 mb-2 empty-produto-form" style="display: none;">
+                {{ produto_formset.empty_form.id }}
+                <div class="col-md-3">
+                    {{ produto_formset.empty_form.nome_produto|as_crispy_field }}
+                </div>
+                <div class="col-md-3">
+                    {{ produto_formset.empty_form.modalidade|as_crispy_field }}
+                </div>
+                <div class="col-md-3">
+                    {{ produto_formset.empty_form.segmento|as_crispy_field }}
+                </div>
+                <div class="col-md-3">
+                    {{ produto_formset.empty_form.comissao_percentual|as_crispy_field }}
+                </div>
+            </div>
+
+            <div id="produtos-container">
+                {% for form in produto_formset %}
+                <div class="row g-1 mb-2">
+                    {{ form.id }}
+                    <div class="col-md-3">
+                        {{ form.nome_produto|as_crispy_field }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.modalidade|as_crispy_field }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.segmento|as_crispy_field }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.comissao_percentual|as_crispy_field }}
+                    </div>
+                    <!-- Se can_delete=True, você pode exibir form.DELETE aqui -->
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-produto" class="btn btn-secondary btn-sm">
+                Adicionar Produto
+            </button>
+        </div>
+    </div>
+
+    <div class="col-12 mt-3">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </div>
+
+    {% if produto_formset.non_form_errors %}
+        <div class="alert alert-danger">
+      {{ produto_formset.non_form_errors }}
+    </div>
+    {% endif %}
+    {% for form in produto_formset %}
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            Erros no Produto: {{ form.errors }}
+        </div>
+        {% endif %}
+    {% endfor %}
+  
+
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+/**
+ * Função para duplicar formulários do inline formset,
+ * substituindo __prefix__ pelo novo índice.
+ */
+function addForm(containerId, totalFormsId, emptyFormClass) {
+    const container = document.getElementById(containerId);
+    const totalForms = document.getElementById(totalFormsId); 
+    // ex: id_departamentos-TOTAL_FORMS ou id_produtos-TOTAL_FORMS
+    const newIndex = parseInt(totalForms.value);
+
+    // Busca o “empty” form que está oculto
+    const emptyFormEl = document.querySelector(`.${emptyFormClass}`);
+    if (!emptyFormEl) {
+        alert("Não encontrei o elemento de form vazio para clonagem.");
+        return;
+    }
+    const newForm = emptyFormEl.cloneNode(true);
+    newForm.style.display = 'flex'; // ou 'block'
+
+    // Substitui __prefix__ no HTML
+    const regex = new RegExp('__prefix__', 'g');
+    newForm.innerHTML = newForm.innerHTML.replace(regex, newIndex);
+
+    // Adiciona o form clonado ao container
+    container.appendChild(newForm);
+
+    // Atualiza o TOTAL_FORMS
+    totalForms.value = newIndex + 1;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Botão de adicionar Departamento
+    const btnAddDepartamento = document.getElementById('add-departamento');
+    if (btnAddDepartamento) {
+        btnAddDepartamento.addEventListener('click', function() {
+            addForm('departamentos-container', 'id_departamentos-TOTAL_FORMS', 'empty-departamento-form');
+        });
+    }
+
+    // Botão de adicionar Produto
+    const btnAddProduto = document.getElementById('add-produto');
+    if (btnAddProduto) {
+        btnAddProduto.addEventListener('click', function() {
+            addForm('produtos-container', 'id_produtos-TOTAL_FORMS', 'empty-produto-form');
+        });
+    }
+});
+</script>
+{% endblock %}

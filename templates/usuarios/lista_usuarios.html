@@ -1,10 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid" style="padding-top:1px;">
+    <h5>Usuários</h5>
+    <hr>
+
+    <div class="tableFixHead">
+        <table class="table table-hover table-custom">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Email</th>
+                    <th>Filial</th>
+                    <th>Perfil</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for operador in operadores %}
+                <tr>
+                    <td>{{ operador.nm_operador }}</td>
+                    <td>{{ operador.cpf_operador }}</td>
+                    <td>{{ operador.email_operador }}</td>
+                    <td>{{ operador.filial.ds_filial }}</td>
+                    <td>{{ operador.perfil.ds_perfil }}</td>
+                    <td>{{ operador.user.is_active|yesno:"Ativo,Inativo" }}</td>
+                    <td>
+                        <a href="{% url 'usuarios:editar_usuario' operador.pk %}" class="btn btn-sm btn-warning"><i class="ri-pencil-line"></i></a>
+                        <a href="{% url 'usuarios:excluir_usuario' operador.pk %}" class="btn btn-sm btn-danger"><i class="ri-delete-bin-line"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class = "btn-positive">
+    <a href="{% url 'usuarios:criar_usuario' %}" id="btn">Novo Usuário</a>
+</div>
+{% endblock %}

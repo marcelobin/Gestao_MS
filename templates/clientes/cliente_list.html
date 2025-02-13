@@ -1,37 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista Clientes</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-<h1>Lista de Clientes</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>CPF</th>
-            <th>E-mail</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for cliente in clientes %}
-        <tr>
-            <td>{{ cliente.nm_cliente }}</td>
-            <td>{{ cliente.nr_cpf }}</td>
-            <td>{{ cliente.email }}</td>
-            <td>
-                <a href="{% url 'cliente_detail' cliente.pk %}">Detalhes</a> |
-                <a href="{% url 'cliente_update' cliente.pk %}">Editar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'cliente_create' %}">Novo Cliente</a>
+{% block content %}
+<div class="container-fluid" style="padding-top:1px;">
+    <h5>Clientes</h5>
+    <hr>
 
+    <div class="tableFixHead">
+        <table class="table table-hover table-custom">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>E-mail</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente.nm_cliente|title }}</td>
+                    <td>{{ cliente.nr_cpf }}</td>
+                    <td>{{ cliente.email }}</td>
+                    <td>
+                        <a href="{% url 'clientes:cliente_detail' cliente.pk %}" class="btn btn-sm btn-info"><i class="ri-eye-line"></i></a>
+                        <a href="{% url 'clientes:cliente_update' cliente.pk %}" class="btn btn-sm btn-warning"><i class="ri-pencil-line"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-</body>
-</html>
+    <a href="{% url 'clientes:cliente_create' %}" id="btn">Novo Cliente</a>
+</div>
+{% endblock %}

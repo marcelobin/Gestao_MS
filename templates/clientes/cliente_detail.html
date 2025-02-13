@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes do Cliente{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Detalhes do Cliente</h1>
+
+    <div class="card mb-3">
+        <div class="card-header">Informações do Cliente</div>
+        <div class="card-body">
+            <p><strong>Nome:</strong> {{ cliente.nm_cliente }}</p>
+            <p><strong>CPF:</strong> {{ cliente.nr_cpf }}</p>
+            <p><strong>Data de Nascimento:</strong> {{ cliente.dt_nascimento }}</p>
+            <p><strong>Nome da Mãe:</strong> {{ cliente.nm_mae }}</p>
+            <p><strong>Celular:</strong> {{ cliente.nm_celular }}</p>
+            <p><strong>Email:</strong> {{ cliente.email }}</p>
+            <p><strong>RG:</strong> {{ cliente.rg_cliente }}</p>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">Endereços</div>
+        <div class="card-body">
+            {% if enderecos %}
+                <!--<ul class="list-group">-->
+                    {% for endereco in enderecos %}
+                        <!--<li class="list-group-item">-->
+                            <strong>CEP:</strong> {{ endereco.cep }}
+                            <strong>Endereço:</strong> {{ endereco.endereco }}, {{ endereco.nro }}
+                            <strong>Complemento:</strong> {{ endereco.complemento }}
+                            <strong>Bairro:</strong> {{ endereco.bairro }}
+                            <strong>Cidade:</strong> {{ endereco.cidade }} - {{ endereco.uf }}<br>
+                        <!--</li>-->
+                    {% endfor %}
+                <!--</ul>-->
+            {% else %}
+                <p>Não há endereços cadastrados.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">Profissões</div>
+        <div class="card-body">
+            {% if profissoes %}
+                <!--<ul class="list-group">-->
+                    {% for profissao in profissoes %}
+                        <!--<li class="list-group-item">-->
+                            <strong>Profissão:</strong> {{ profissao.profissao }}
+                            <strong>Cargo:</strong> {{ profissao.cargo }}
+                            <p><strong>Local de Trabalho:</strong> {{ profissao.local_trabalho }}</p>
+                            <p><strong>Data de Admissão:</strong> {{ profissao.data_admissao }}</p>
+                            <p><strong>Renda:</strong> R$ {{ profissao.renda }}</p>
+                            <p><strong>Outras Rendas:</strong> R$ {{ profissao.outras_rendas }}</p>
+                            <p><strong>Telefone Comercial:</strong> {{ profissao.fone_lt }}</p>
+                        <!--</li>-->
+                    {% endfor %}
+                <!--</ul>-->
+            {% else %}
+                <p>Não há profissões cadastradas.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="bottom-buttons">
+        <button type="button" class="btn-voltar" onclick="window.location.href='{% url 'clientes:cliente_list' %}'">Voltar</button>
+        <button type="button" class="btn-salvar" onclick="window.location.href='{% url 'clientes:cliente_update' cliente.pk %}'">Editar</button>
+    </div>
+    
+</div>
+{% endblock %}

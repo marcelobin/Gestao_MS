@@ -1,0 +1,723 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container my-4" id="main-content">
+  
+  <!-- Título da Página -->
+  <div class="d-flex align-items-center mb-4 titulo-container">
+    <i class="fas fa-file-alt titulo-icone"></i>
+    <h4 class="titulo-texto">{{ titulo_pagina }}</h4>
+  </div>
+
+  <!-- Formulário -->
+  <form method="post" id="propostaForm" enctype="multipart/form-data" class="needs-validation">
+    {% csrf_token %}
+    
+    <!-- DADOS DA PROPOSTA -->
+    <div class="card formulario-card mb-4">
+      <div class="card-header">
+        <i class="fas fa-clipboard-list me-2"></i> Dados da Proposta
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-3 form-floating">
+            {{ proposta_form.nr_proposta }}
+            <label for="{{ proposta_form.nr_proposta.id_for_label }}">{{ proposta_form.nr_proposta.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ proposta_form.vl_financiado }}
+            <label for="{{ proposta_form.vl_financiado.id_for_label }}">{{ proposta_form.vl_financiado.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ proposta_form.prazo }}
+            <label for="{{ proposta_form.prazo.id_for_label }}">{{ proposta_form.prazo.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ proposta_form.vl_parcela }}
+            <label for="{{ proposta_form.vl_parcela.id_for_label }}">{{ proposta_form.vl_parcela.label }}</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            {{ proposta_form.dt_proposta }}
+            <label for="{{ proposta_form.dt_proposta.id_for_label }}">{{ proposta_form.dt_proposta.label }}</label>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+          <div class="col-md-4 form-floating">
+            {{ proposta_form.operador }}
+            <label for="{{ proposta_form.operador.id_for_label }}">{{ proposta_form.operador.label }}</label>
+          </div>
+          <div class="col-md-4 form-floating">
+            <select id="id_loja" class="form-select" name="loja">
+              <option value="">Selecione uma loja...</option>
+            </select>
+            <label for="id_loja">Loja</label>
+          </div>
+          <div class="col-md-4 form-floating">
+            <select id="id_vendedor" class="form-select" name="vendedor">
+              <option value="">Selecione um vendedor...</option>
+            </select>
+            <label for="id_vendedor">Vendedor</label>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+          <div class="col-md-2 form-floating">
+            {{ proposta_form.financeira }}
+            <label for="{{ proposta_form.financeira.id_for_label }}">{{ proposta_form.financeira.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ proposta_form.modalidade }}
+            <label for="{{ proposta_form.modalidade.id_for_label }}">{{ proposta_form.modalidade.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ proposta_form.segmento }}
+            <label for="{{ proposta_form.segmento.id_for_label }}">{{ proposta_form.segmento.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            <select id="id_produto" class="form-select" name="produto">
+              <option value="">Selecione um produto...</option>
+            </select>
+            <label for="id_produto">Produto</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ proposta_form.status }}
+            <label for="{{ proposta_form.status.id_for_label }}">{{ proposta_form.status.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ proposta_form.dt_pagamento }}
+            <label for="{{ proposta_form.dt_pagamento.id_for_label }}">{{ proposta_form.dt_pagamento.label }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- DADOS DO VEÍCULO -->
+    <div class="card formulario-card mb-4">
+      <div class="card-header">
+        <i class="fas fa-car me-2"></i> Dados do Veículo
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-3 form-floating">
+            {{ veiculo_form.marca }}
+            <label for="{{ veiculo_form.marca.id_for_label }}">{{ veiculo_form.marca.label }}</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            {{ veiculo_form.modelo }}
+            <label for="{{ veiculo_form.modelo.id_for_label }}">{{ veiculo_form.modelo.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ veiculo_form.ano_fabricacao }}
+            <label for="{{ veiculo_form.ano_fabricacao.id_for_label }}">{{ veiculo_form.ano_fabricacao.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ veiculo_form.ano_modelo }}
+            <label for="{{ veiculo_form.ano_modelo.id_for_label }}">{{ veiculo_form.ano_modelo.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ veiculo_form.vl_veiculo }}
+            <label for="{{ veiculo_form.vl_veiculo.id_for_label }}">{{ veiculo_form.vl_veiculo.label }}</label>
+          </div>
+        </div>
+        <div class="row g-3 mt-3">
+          <div class="col-md-2 form-floating">
+            {{ veiculo_form.placa }}
+            <label for="{{ veiculo_form.placa.id_for_label }}">{{ veiculo_form.placa.label }}</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            {{ veiculo_form.renavam }}
+            <label for="{{ veiculo_form.renavam.id_for_label }}">{{ veiculo_form.renavam.label }}</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            {{ veiculo_form.chassi }}
+            <label for="{{ veiculo_form.chassi.id_for_label }}">{{ veiculo_form.chassi.label }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- DADOS DO CLIENTE -->
+    <div class="card formulario-card mb-4">
+      <div class="card-header">
+        <i class="fas fa-user me-2"></i> Dados do Cliente
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-3 form-floating">
+            {{ cliente_form.nr_cpf }}
+            <label for="{{ cliente_form.nr_cpf.id_for_label }}">{{ cliente_form.nr_cpf.label }}</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            {{ cliente_form.nm_cliente }}
+            <label for="{{ cliente_form.nm_cliente.id_for_label }}">{{ cliente_form.nm_cliente.label }}</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            {{ cliente_form.dt_nascimento }}
+            <label for="{{ cliente_form.dt_nascimento.id_for_label }}">{{ cliente_form.dt_nascimento.label }}</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            {{ cliente_form.sexo }}
+            <label for="{{ cliente_form.sexo.id_for_label }}">{{ cliente_form.sexo.label }}</label>
+          </div>
+        </div>
+        <div class="row g-3 mt-3">
+          <div class="col-md-3 form-floating">
+            {{ cliente_form.rg_cliente }}
+            <label for="{{ cliente_form.rg_cliente.id_for_label }}">{{ cliente_form.rg_cliente.label }}</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            {{ cliente_form.nm_mae }}
+            <label for="{{ cliente_form.nm_mae.id_for_label }}">{{ cliente_form.nm_mae.label }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ENDEREÇO (Formset) -->
+    <div class="card formulario-card mb-4">
+      <div class="card-header">
+        <i class="fas fa-home me-2"></i> Endereço
+      </div>
+      <div class="card-body">
+        {{ endereco_formset.management_form }}
+        {% for eform in endereco_formset %}
+          <div class="mb-4 border-bottom pb-3">
+            {{ eform.id }}
+            <div class="row g-3">
+              <div class="col-md-2 form-floating">
+                {{ eform.cep }}
+                <label for="{{ eform.cep.id_for_label }}">{{ eform.cep.label }}</label>
+              </div>
+              <div class="col-md-4 form-floating">
+                {{ eform.endereco }}
+                <label for="{{ eform.endereco.id_for_label }}">{{ eform.endereco.label }}</label>
+              </div>
+              <div class="col-md-2 form-floating">
+                {{ eform.nro }}
+                <label for="{{ eform.nro.id_for_label }}">{{ eform.nro.label }}</label>
+              </div>
+              <div class="col-md-4 form-floating">
+                {{ eform.complemento }}
+                <label for="{{ eform.complemento.id_for_label }}">{{ eform.complemento.label }}</label>
+              </div>
+            </div>
+            <div class="row g-3 mt-2">
+              <div class="col-md-2 form-floating">
+                {{ eform.bairro }}
+                <label for="{{ eform.bairro.id_for_label }}">{{ eform.bairro.label }}</label>
+              </div>
+              <div class="col-md-2 form-floating">
+                {{ eform.cidade }}
+                <label for="{{ eform.cidade.id_for_label }}">{{ eform.cidade.label }}</label>
+              </div>
+              <div class="col-md-1 form-floating">
+                {{ eform.uf }}
+                <label for="{{ eform.uf.id_for_label }}">{{ eform.uf.label }}</label>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <!-- CONTATOS (Formset) -->
+    <div class="card formulario-card mb-4">
+      <div class="card-header">
+        <i class="fas fa-phone me-2"></i> Contatos
+      </div>
+      <div class="card-body">
+        {{ contato_formset.management_form }}
+        {% for cform in contato_formset %}
+          <div class="row g-3 mb-4 border-bottom pb-3">
+            {{ cform.id }}
+            <div class="col-md-4 form-floating">
+              {{ cform.telefone_fixo }}
+              <label for="{{ cform.telefone_fixo.id_for_label }}">{{ cform.telefone_fixo.label }}</label>
+            </div>
+            <div class="col-md-4 form-floating">
+              {{ cform.celular }}
+              <label for="{{ cform.celular.id_for_label }}">{{ cform.celular.label }}</label>
+            </div>
+            <div class="col-md-4 form-floating">
+              {{ cform.email }}
+              <label for="{{ cform.email.id_for_label }}">{{ cform.email.label }}</label>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <!-- DADOS COMERCIAIS (Formset) -->
+    <div class="card formulario-card mb-4">
+      <div class="card-header">
+        <i class="fas fa-briefcase me-2"></i> Dados Comerciais
+      </div>
+      <div class="card-body">
+        {{ profissao_formset.management_form }}
+        {% for pform in profissao_formset %}
+          <div class="row g-3 mb-4 border-bottom pb-3">
+            {{ pform.id }}
+            <div class="col-md-2 form-floating">
+              {{ pform.profissao }}
+              <label for="{{ pform.profissao.id_for_label }}">{{ pform.profissao.label }}</label>
+            </div>
+            <div class="col-md-2 form-floating">
+              {{ pform.cargo }}
+              <label for="{{ pform.cargo.id_for_label }}">{{ pform.cargo.label }}</label>
+            </div>
+            <div class="col-md-3 form-floating">
+              {{ pform.local_trabalho }}
+              <label for="{{ pform.local_trabalho.id_for_label }}">{{ pform.local_trabalho.label }}</label>
+            </div>
+            <div class="col-md-2 form-floating">
+              {{ pform.data_admissao }}
+              <label for="{{ pform.data_admissao.id_for_label }}">{{ pform.data_admissao.label }}</label>
+            </div>
+            <div class="col-md-2 form-floating">
+              {{ pform.renda }}
+              <label for="{{ pform.renda.id_for_label }}">{{ pform.renda.label }}</label>
+            </div>
+            <div class="col-md-2 form-floating">
+              {{ pform.outras_rendas }}
+              <label for="{{ pform.outras_rendas.id_for_label }}">{{ pform.outras_rendas.label }}</label>
+            </div>
+            <div class="col-md-3 form-floating mt-3">
+              {{ pform.fone_lt }}
+              <label for="{{ pform.fone_lt.id_for_label }}">{{ pform.fone_lt.label }}</label>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <!-- BOTÕES DE AÇÃO -->
+    <div class="d-flex justify-content-between my-4">
+      <button type="button" class="btn botao-voltar"
+              onclick="window.location.href='{% url 'propostas:listar_propostas' %}'">
+        <i class="fas fa-arrow-left me-1"></i> Voltar
+      </button>
+      <button type="submit" class="btn botao-salvar">
+        <i class="fas fa-save me-1"></i> Salvar Proposta
+      </button>
+    </div>
+  </form>
+
+
+  <!-- ERROS DOS FORMSETS -->
+  {% for formset in formsets %}
+    {% if formset.errors %}
+      <div class="alert alert-danger">
+        <strong>Erros no formset {{ formset.prefix }}:</strong>
+        <ul>
+          {% for form in formset.forms %}
+            {% for field, errors in form.errors.items %}
+              <li>{{ field }}: {{ errors }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    console.log('Página carregada.');
+
+    // ========================================================================
+    //                     FUNÇÃO PARA APLICAR MÁSCARAS
+    // ========================================================================
+    function aplicarMascaras() {
+      // Máscara para valores monetários
+      $('input[id*="vl_financiado"], input[id*="vl_parcela"], input[id*="renda"], input[id*="vl_veiculo"], input[id*="outras_rendas"]').mask('000.000.000.000,00', { reverse: true });
+
+      // Máscara para CEP
+      $('input[id*="cep"]').mask('00000-000');
+
+      // Máscara para telefones
+      $('input[id*="telefone_fixo"]').mask('(00) 0000-0000');
+      $('input[id*="celular"]').mask('(00) 00000-0000');
+
+      // Máscara para CPF
+      $('input[id*="nr_cpf"]').mask('000.000.000-00', { reverse: true });
+    }
+
+    // ========================================================================
+    //                     REAPLICAR MÁSCARAS DINAMICAMENTE
+    // ========================================================================
+    $(document).on('click', '.add-row', function () {
+      setTimeout(aplicarMascaras, 100); // Pequeno delay para garantir a renderização
+    });
+
+    // ========================================================================
+    // REMOVER FORMATOS ANTES DE ENVIAR O FORMULÁRIO
+    // ========================================================================
+    $('#propostaForm').on('submit', function () {
+      // Valor financiado, parcela, renda e outras rendas
+      $('input[id*="vl_financiado"], input[id*="vl_parcela"], input[id*="renda"], input[id*="vl_veiculo"], input[id*="outras_rendas"]').each(function () {
+          let valor = $(this).val();
+          let valorNumerico = valor.replace(/\./g, '').replace(',', '.');
+          $(this).val(valorNumerico);
+      });
+
+      // Telefones
+      $('input[id*="telefone_fixo"], input[id*="celular"]').each(function () {
+        $(this).val($(this).val().replace(/\D/g, ''));
+      });
+
+      // CEP
+      $('input[id*="cep"]').each(function () {
+        $(this).val($(this).val().replace(/\D/g, ''));
+      });
+
+      // CPF
+      $('input[id*="nr_cpf"]').each(function () {
+        $(this).val($(this).val().replace(/\D/g, ''));
+      });
+    });
+
+    // =========================================================================
+    //                    VARIÁVEIS (TANTO P/ NOVO QUANTO EDIT.)
+    // =========================================================================
+    const operadorId   = "{{ operador_id|default:'' }}";
+    const lojaId       = "{{ loja_id|default:'' }}";
+    const vendedorId   = "{{ vendedor_id|default:'' }}";
+    const financeiraId = "{{ financeira_id|default:'' }}";
+    const modalidadeId = "{{ modalidade_id|default:'' }}";
+    const segmentoId   = "{{ segmento_id|default:'' }}";
+    const produtoId    = "{{ produto_id|default:'' }}";
+
+    // =========================================================================
+    //                     FUNÇÕES AUXILIARES DE BUSCA (fetch)
+    // =========================================================================
+    function fetchLojasPorOperador(operador) {
+      return fetch(`/propostas/api/lojas/?operador_id=${operador}`).then(resp => resp.json());
+    }
+    function fetchVendedoresPorLoja(loja) {
+      return fetch(`/propostas/api/vendedores_por_loja/?loja_id=${loja}`).then(resp => resp.json());
+    }
+    function fetchModalidades(financeira) {
+      return fetch(`/propostas/api/financeira/modalidades/?financeira_id=${financeira}`).then(resp => resp.json());
+    }
+    function fetchSegmentos(financeira, modalidade) {
+      return fetch(`/propostas/api/financeira/segmentos/?financeira_id=${financeira}&modalidade_id=${modalidade}`)
+        .then(resp => resp.json());
+    }
+    function fetchProdutos(financeira, modalidade, segmento) {
+      return fetch(`/propostas/api/financeira/produtos/?financeira_id=${financeira}&modalidade_id=${modalidade}&segmento_id=${segmento}`)
+        .then(resp => resp.json());
+    }
+
+    // =========================================================================
+    //                        CONSULTA CEP / AUTOPREENCHIMENTO
+    // =========================================================================
+    $(document).on('blur', '[id$="-cep"]', function() {
+      const idOriginal = $(this).attr('id');
+      console.log(`[CEP] Blur event: ${idOriginal}`);
+
+      const idEndereco = idOriginal.replace('-cep', '-endereco');
+      const idBairro   = idOriginal.replace('-cep', '-bairro');
+      const idCidade   = idOriginal.replace('-cep', '-cidade');
+      const idUf       = idOriginal.replace('-cep', '-uf');
+
+      const cep = $(this).val().replace(/\D/g, '');
+      if (cep.length === 8) {
+        console.log(`[CEP] Buscando CEP: ${cep}`);
+        $.getJSON(`https://viacep.com.br/ws/${cep}/json/`, function(data) {
+          if (!data.erro) {
+            console.log(`[CEP] CEP ${cep} carregado com sucesso.`);
+            $(`#${idEndereco}`).val(data.logradouro || '');
+            $(`#${idBairro}`).val(data.bairro || '');
+            $(`#${idCidade}`).val(data.localidade || '');
+            $(`#${idUf}`).val(data.uf || '');
+          } else {
+            console.warn(`[CEP] CEP ${cep} não encontrado.`);
+            alert('CEP não encontrado.');
+          }
+        }).fail(function(textStatus, errorThrown) {
+          console.error(`[CEP] Erro ao buscar informações do CEP ${cep}:`, textStatus, errorThrown);
+          alert('Erro ao buscar informações do CEP.');
+        });
+      }
+    });
+
+    // =========================================================================
+    //                   MÁSCARA & VALIDAÇÃO DE CPF
+    // =========================================================================
+    $('#id_nr_cpf').on('input', function() {
+      let value = $(this).val().replace(/\D/g, '').substring(0, 11);
+      if (value.length > 3)  value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      if (value.length > 7)  value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      if (value.length > 11) value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      $(this).val(value);
+    });
+
+    function validarCPF(cpf) {
+      cpf = cpf.replace(/[^\d]+/g, "");
+      if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+      let soma = 0, resto;
+      for (let i = 1; i <= 9; i++) {
+        soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+      }
+      resto = (soma * 10) % 11;
+      if (resto === 10 || resto === 11) resto = 0;
+      if (resto !== parseInt(cpf.substring(9, 10))) return false;
+
+      soma = 0;
+      for (let i = 1; i <= 10; i++) {
+        soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+      }
+      resto = (soma * 10) % 11;
+      if (resto === 10 || resto === 11) resto = 0;
+      return resto === parseInt(cpf.substring(10, 11));
+    }
+
+    $('#id_nr_cpf').on('blur', function() {
+      const cpf = $(this).val().replace(/\D/g, "");
+      if (!validarCPF(cpf)) {
+        alert("CPF inválido. Por favor, digite um CPF válido.");
+        return;
+      }
+      const lojaAtual     = $('#id_loja').val() || "";
+      const operadorAtual = $('#id_operador').val() || "";
+      console.log(`[CPF] Verificando cliente. CPF: ${cpf}, Loja: ${lojaAtual}, Operador: ${operadorAtual}`);
+
+      // Exemplo de chamada para API de verificação
+      $.ajax({
+        url: `/propostas/api/verificar-cliente/`,
+        data: { cpf: cpf, loja_id: lojaAtual, operador_id: operadorAtual },
+        method: "GET",
+        success: function(data) {
+          if (data.existe) {
+            console.log("[CPF] Cliente encontrado. Preenchendo dados...");
+            // Preenche dados
+            $("#id_nm_cliente").val(data.nm_cliente || "");
+            $("#id_dt_nascimento").val(data.dt_nascimento || "");
+            $("#id_rg_cliente").val(data.rg_cliente || "");
+
+            // endereços
+            if (data.enderecos && data.enderecos.length) {
+              data.enderecos.forEach(function(endereco, index) {
+                $(`#id_form-${index}-cep`).val(endereco.cep || "");
+                $(`#id_form-${index}-endereco`).val(endereco.endereco || "");
+                $(`#id_form-${index}-nro`).val(endereco.nro || "");
+                $(`#id_form-${index}-complemento`).val(endereco.complemento || "");
+                $(`#id_form-${index}-bairro`).val(endereco.bairro || "");
+                $(`#id_form-${index}-cidade`).val(endereco.cidade || "");
+                $(`#id_form-${index}-uf`).val(endereco.uf || "");
+              });
+            }
+            // contatos
+            if (data.contatos && data.contatos.length) {
+              data.contatos.forEach(function(contato, index) {
+                $(`#id_contato-${index}-telefone_fixo`).val(contato.telefone_fixo || "");
+                $(`#id_contato-${index}-celular`).val(contato.celular || "");
+                $(`#id_contato-${index}-email`).val(contato.email || "");
+              });
+            }
+            // profissões
+            if (data.profissoes && data.profissoes.length) {
+              data.profissoes.forEach(function(profissao, index) {
+                $(`#id_profissao-${index}-profissao`).val(profissao.profissao || "");
+                $(`#id_profissao-${index}-cargo`).val(profissao.cargo || "");
+              });
+            }
+          } else {
+            console.log("[CPF] Cliente não encontrado.");
+            alert("Cliente não encontrado. Por favor, cadastre-o.");
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("[CPF] Erro ao buscar cliente:", error);
+          alert("Erro ao buscar cliente. Tente novamente mais tarde.");
+        },
+      });
+    });
+
+    // =========================================================================
+    //  CAMPOS DINÂMICOS (NOVAS PROPOSTAS) - OPERADOR → LOJA → VENDEDOR
+    // =========================================================================
+    $('#id_operador').on('change', function() {
+      const opId = $(this).val();
+      // Limpa lojas e vendedores
+      $('#id_loja').empty().append('<option value="">Selecione uma loja...</option>');
+      $('#id_vendedor').empty().append('<option value="">Selecione um vendedor...</option>');
+      if (!opId) return;
+
+      // Carrega Lojas
+      fetchLojasPorOperador(opId).then(lojas => {
+        lojas.forEach(loja => {
+          $('#id_loja').append(`<option value="${loja.id}">${loja.nm_fantasia}</option>`);
+        });
+      });
+    });
+
+    $('#id_loja').on('change', function() {
+      const lojaAtual = $(this).val();
+      $('#id_vendedor').empty().append('<option value="">Selecione um vendedor...</option>');
+      if (!lojaAtual) return;
+
+      // Carrega Vendedores
+      fetchVendedoresPorLoja(lojaAtual).then(vendedores => {
+        vendedores.forEach(v => {
+          $('#id_vendedor').append(`<option value="${v.id}">${v.nome_vendedor}</option>`);
+        });
+      });
+    });
+
+    // =========================================================================
+    //  CAMPOS DINÂMICOS (NOVAS PROPOSTAS) - FINANCEIRA → MODALIDADE → SEGMENTO
+    // =========================================================================
+    $('#id_financeira').on('change', function() {
+      const fId = $(this).val();
+      $('#id_modalidade').empty().append('<option value="">Selecione a Modalidade...</option>');
+      $('#id_segmento').empty().append('<option value="">Selecione o Segmento...</option>');
+      $('#id_produto').empty().append('<option value="">Selecione o Produto...</option>');
+      if (!fId) return;
+
+      fetchModalidades(fId).then(modais => {
+        modais.forEach(m => {
+          $('#id_modalidade').append(`<option value="${m.id}">${m.nome_modalidade}</option>`);
+        });
+      });
+    });
+
+    $('#id_modalidade').on('change', function() {
+      const fId = $('#id_financeira').val();
+      const mId = $(this).val();
+      $('#id_segmento').empty().append('<option value="">Selecione o Segmento...</option>');
+      $('#id_produto').empty().append('<option value="">Selecione o Produto...</option>');
+      if (!fId || !mId) return;
+
+      fetchSegmentos(fId, mId).then(segmentos => {
+        segmentos.forEach(s => {
+          $('#id_segmento').append(`<option value="${s.id}">${s.nome_segmento}</option>`);
+        });
+      });
+    });
+
+    $('#id_segmento').on('change', function() {
+      const fId = $('#id_financeira').val();
+      const mId = $('#id_modalidade').val();
+      const sId = $(this).val();
+      $('#id_produto').empty().append('<option value="">Selecione o Produto...</option>');
+      if (!fId || !mId || !sId) return;
+
+      fetchProdutos(fId, mId, sId).then(produtos => {
+        produtos.forEach(p => {
+          $('#id_produto').append(`<option value="${p.id}">${p.nome_produto}</option>`);
+        });
+      });
+    });
+
+    // =========================================================================
+    //    CARREGAMENTO DE DADOS (PROPOSTAS EXISTENTES) - operador/loja/vendedor
+    // =========================================================================
+    function carregarOperadorLoja() {
+      if (!operadorId) {
+        console.log('[Operador/Loja] Sem operadorId (nova proposta ou não definido)');
+        return;
+      }
+      // Seta o operador no select
+      $('#id_operador').val(operadorId);
+
+      // Carrega Lojas do operador
+      fetchLojasPorOperador(operadorId).then(lojas => {
+        const lojaSelect = $('#id_loja')
+          .empty()
+          .append('<option value="">Selecione uma loja...</option>');
+        lojas.forEach(loja => {
+          lojaSelect.append(`<option value="${loja.id}">${loja.nm_fantasia}</option>`);
+        });
+
+        // Se existir lojaId, seleciona e carrega vendedores
+        if (lojaId) {
+          $('#id_loja').val(lojaId);
+          return fetchVendedoresPorLoja(lojaId);
+        }
+        return null;
+      }).then(vendedores => {
+        if (!vendedores) return;
+        const vendSelect = $('#id_vendedor')
+          .empty()
+          .append('<option value="">Selecione um vendedor...</option>');
+        vendedores.forEach(v => {
+          vendSelect.append(`<option value="${v.id}">${v.nome_vendedor}</option>`);
+        });
+        if (vendedorId) {
+          vendSelect.val(vendedorId);
+        }
+      });
+    }
+
+    // =========================================================================
+    //   CARREGAMENTO DE DADOS (PROPOSTAS EXISTENTES) - financeira/modal/seg/prod
+    // =========================================================================
+    function carregarFinanceiraModalSegProd() {
+      if (!financeiraId) {
+        console.log('[Financeira/Modal/Segm/Prod] Sem financeiraId (nova proposta).');
+        return;
+      }
+      // Seta financeira
+      $('#id_financeira').val(financeiraId);
+
+      // Carrega modalidades
+      fetchModalidades(financeiraId).then(modais => {
+        $('#id_modalidade')
+          .empty()
+          .append('<option value="">Selecione a Modalidade...</option>');
+        modais.forEach(m => {
+          $('#id_modalidade').append(`<option value="${m.id}">${m.nome_modalidade}</option>`);
+        });
+        if (modalidadeId) {
+          $('#id_modalidade').val(modalidadeId);
+          return fetchSegmentos(financeiraId, modalidadeId);
+        }
+        return null;
+      }).then(segmentos => {
+        if (!segmentos) return;
+        $('#id_segmento')
+          .empty()
+          .append('<option value="">Selecione o Segmento...</option>');
+        segmentos.forEach(s => {
+          $('#id_segmento').append(`<option value="${s.id}">${s.nome_segmento}</option>`);
+        });
+        if (segmentoId) {
+          $('#id_segmento').val(segmentoId);
+          return fetchProdutos(financeiraId, modalidadeId, segmentoId);
+        }
+        return null;
+      }).then(produtos => {
+        if (!produtos) return;
+        $('#id_produto')
+          .empty()
+          .append('<option value="">Selecione o Produto...</option>');
+        produtos.forEach(p => {
+          $('#id_produto').append(`<option value="${p.id}">${p.nome_produto}</option>`);
+        });
+        if (produtoId) {
+          $('#id_produto').val(produtoId);
+        }
+      });
+    }
+
+    // =========================================================================
+    //                          INICIALIZAÇÃO
+    // =========================================================================
+    carregarOperadorLoja();
+    carregarFinanceiraModalSegProd();
+    aplicarMascaras(); // Aplica as máscaras aos campos renderizados inicialmente
+
+  });
+</script>
+
+
+{% endblock %}

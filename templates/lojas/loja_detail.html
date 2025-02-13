@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+<div class="card">
+    
+    <div class="card-body">
+        <h5 class="card-title titulo-secao">Ficha Cadastral de {{ loja.nm_fantasia }}</h5>
+        <hr>
+    </div>
+
+    <div class="card-body">
+        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Dados Cadastrais</h5>
+        <div class="row g-1 mb-2">
+            <div class="col-md-2"><strong>CNPJ:</strong> {{ loja.nr_cnpj }}</div>
+            <div class="col-md-4"><strong>Data de Constituição:</strong> {{ loja.dt_constituicao|date:"d/m/Y" }}</div>
+
+        </div>
+        <div class="row g-1 mb-2">
+            <div class="col-md-4"><strong>Razão Social:</strong> {{ loja.razao_social }}</div>
+            <div class="col-md-4"><strong>Nome Fantasia:</strong> {{ loja.nm_fantasia }}</div>
+        </div>
+        <div class="row g-1 mb-2">
+            <div class="col-md-2"><strong>CEP:</strong> {{ loja.cep }}</div>
+            <div class="col-md-3"><strong>Endereço:</strong> {{ loja.endereco }}</div>
+            <div class="col-md-1"><strong>Número:</strong> {{ loja.nro }}</div>
+            <div class="col-md-2"><strong>Complemento:</strong> {{ loja.complemento|default_if_none:"" }}</div>
+            <div class="col-md-2"><strong>Bairro:</strong> {{ loja.bairro }}</div>
+        </div>
+        <div class="row g-1 mb-2">
+            <div class="col-md-2"><strong>Cidade:</strong> {{ loja.cidade }}</div>
+            <div class="col-md-1"><strong>UF:</strong> {{ loja.uf }}</div>
+            <div class="col-md-2"><strong>Telefone Fixo:</strong> {{ loja.fone_fixo }}</div>
+            <div class="col-md-2"><strong>Celular:</strong> {{ loja.celular }}</div>
+            <div class="col-md-3"><strong>Email:</strong> {{ loja.email }}</div>
+        </div>
+        <div class="row g-1 mb-2">
+            <div class="col-md-3"><strong>Operador:</strong> {{ loja.operador }}</div>
+            <div class="col-md-2"><strong>Filial:</strong> {{ loja.filial }}</div>
+        </div>
+    </div>
+ 
+    <div class="card-body">
+        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Dados Bancários</h5>
+        {% for dados_bancarios in dadosbancarios %}
+        <div class="row g-1 mb-2">
+            <div class="col-md-3"><strong>Código:</strong> {{ dados_bancarios.codigo }}</div>
+            <div class="col-md-3"><strong>Agência:</strong> {{ dados_bancarios.agencia }}</div>
+            <div class="col-md-3"><strong>Conta:</strong> {{ dados_bancarios.conta }}</div>
+        </div>
+        {% empty %}
+        <p>Sem dados bancários cadastrados.</p>
+        {% endfor %}
+    </div>    
+
+    <div class="card-body">
+        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Sócios</h5>
+        {% for socio in socios %}
+        <div class="row g-1 mb-2">
+            <div class="col-md-2"><strong>CPF:</strong> {{ socio.cpf_socio }}</div>
+            <div class="col-md-3"><strong>Nome:</strong> {{ socio.nome_socio }}</div>
+            <div class="col-md-2"><strong>Data de Nascimento:</strong> {{ socio.dt_nascimento_socio|date:"d/m/Y" }}</div>
+            <div class="col-md-2"><strong>Celular:</strong> {{ socio.celular }}</div>
+            <div class="col-md-3"><strong>Email:</strong> {{ socio.email }}</div>
+        </div>
+        {% empty %}
+        <p>Sem sócios cadastrados.</p>
+        {% endfor %}
+    </div>
+
+    <div class="card-body">
+        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Vendedores</h5>
+        {% for vendedor in vendedores %}
+        <div class="row g-1 mb-2">
+            <div class="col-md-3"><strong>Nome:</strong> {{ vendedor.nome_vendedor }}</div>
+            <div class="col-md-2"><strong>Pix:</strong> {{ vendedor.chave_pix }}</div>
+            <div class="col-md-2"><strong>Celular:</strong> {{ vendedor.celular_vendedor }}</div>
+            <div class="col-md-3"><strong>Email:</strong> {{ vendedor.email_vendedor }}</div>
+        </div>
+        {% empty %}
+        <p>Sem vendedores cadastrados.</p>
+        {% endfor %}
+    </div>    
+
+    <div class="card-body">
+        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Acessos às Financeiras</h5>
+
+        {% for acesso in acessos %}
+        <div class="row g-1 mb-2">
+            <div class="col-md-3"><strong>Financeira:</strong> {{ acesso.financeira }}</div>
+            <div class="col-md-3"><strong>Código de Acesso:</strong> {{ acesso.codigo_acesso }}</div>
+        </div>
+        {% empty %}
+        <p>Sem acessos cadastrados.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+<a href="{% url 'lojas:criar_editar_loja' loja.id %}" id="btn btn-primary">Editar Loja</a>
+<a href="{% url 'lojas:listar_lojas' %}" class="btn btn-secondary">Voltar</a>
+
+{% endblock %}

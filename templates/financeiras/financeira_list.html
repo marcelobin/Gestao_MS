@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid" style="padding-top:1px;">
+    <h5>Financeiras</h5>
+    <hr>
+
+    <div class="tableFixHead">
+        <table class="table table-hover table-custom">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CNPJ</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for financeira in financeiras %}
+                <tr>
+                    <td>{{ financeira.nome_financeira }}</td>
+                    <td>{{ financeira.cnpj }}</td>
+                    <td>
+                        <a href="{% url 'financeiras:financeira_detail' financeira.id %}" class="btn btn-sm btn-info"><i class="ri-eye-line"></i></a>
+                        <a href="{% url 'financeiras:financeira_update' financeira.id %}" class="btn btn-sm btn-warning"><i class="ri-pencil-line"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+<div class = "btn-positive">
+    <a href="{% url 'financeiras:financeira_create' %}" id="btn">Nova Financeira</a>
+</div>
+{% endblock %}

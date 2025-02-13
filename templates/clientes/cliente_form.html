@@ -1,31 +1,231 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Formulário Clientes</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
-<form method="post">
+{% block content %}
+<form method="post" class="row g-1">
     {% csrf_token %}
-    <h2>Dados do Cliente</h2>
-    {{ cliente_form.as_p }}
 
+    <!-- Dados do Cliente -->
+    <h2>Dados do Cliente</h2>
+    <div class="row g-1">
+        <div class="col-md-2">
+            <label for="id_nr_cpf" class="form-label"></label>
+            {{ cliente_form.nr_cpf|as_crispy_field }}
+        </div>
+        <div class="col-md-6">
+            <label for="id_nm_cliente" class="form-label"></label>
+            {{ cliente_form.nm_cliente|as_crispy_field }}
+        </div>
+
+        <div class="col-md-3">
+            <label for="id_dt_nascimento" class="form-label"></label>
+            {{ cliente_form.dt_nascimento|as_crispy_field }}
+        </div>
+    </div>
+    <div class="row g-1">
+        <div class="col-md-6">
+            <label for="id_rg_cliente" class="form-label"></label>
+            {{ cliente_form.rg_cliente|as_crispy_field }}
+        </div>
+        <div class="col-md-6">
+            <label for="id_nm_mae" class="form-label"></label>
+            {{ cliente_form.nm_mae|as_crispy_field }}
+        </div>
+    </div>
+    <div class="row g-1">
+        <div class="col-md-6">
+            <label for="id_nm_celular" class="form-label"></label>
+            {{ cliente_form.nm_celular|as_crispy_field }}
+        </div>
+        <div class="col-md-6">
+            <label for="id_email" class="form-label"></label>
+            {{ cliente_form.email|as_crispy_field }}
+        </div>
+    </div>
+
+    <!-- Endereços -->
     <h2>Endereços</h2>
     {{ endereco_formset.management_form }}
-    {% for form in endereco_formset %}
-        {{ form.as_p }}
-    {% endfor %}
+    <div id="enderecos-container">
+        <!-- Formulário base para clonagem -->
+        <div class="endereco-form row g-1 mb-2" style="display: none;">
+            <div class="col-md-1">
+                <label for="id_cep" class="form-label"></label>
+                {{ endereco_formset.empty_form.cep|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+                <label for="id_endereco" class="form-label"></label>
+                {{ endereco_formset.empty_form.endereco|as_crispy_field }}
+            </div>
+            <div class="col-md-1">
+                <label for="id_nro" class="form-label"></label>
+                {{ endereco_formset.empty_form.nro|as_crispy_field }}
+            </div>
+            <div class="col-md-2">
+                <label for="id_complemento" class="form-label"></label>
+                {{ endereco_formset.empty_form.complemento|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_bairro" class="form-label"></label>
+                {{ endereco_formset.empty_form.bairro|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_cidade" class="form-label"></label>
+                {{ endereco_formset.empty_form.cidade|as_crispy_field }}
+            </div>
+            <div class="col-md-1">
+                <label for="id_uf" class="form-label"></label>
+                {{ endereco_formset.empty_form.uf|as_crispy_field }}
+            </div>
+        </div>
 
+        {% for form in endereco_formset %}
+        <div class="endereco-form row g-1 mb-0">
+            <div class="col-md-1">
+                <label for="id_cep" class="form-label"></label>
+                {{ form.cep|as_crispy_field }}
+            </div>
+            <div class="col-md-3">
+                <label for="id_endereco" class="form-label"></label>
+                {{ form.endereco|as_crispy_field }}
+            </div>
+            <div class="col-md-1">
+                <label for="id_nro" class="form-label"></label>
+                {{ form.nro|as_crispy_field }}
+            </div>
+            <div class="col-md-2">
+                <label for="id_complemento" class="form-label"></label>
+                {{ form.complemento|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_bairro" class="form-label"></label>
+                {{ form.bairro|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_cidade" class="form-label"></label>
+                {{ form.cidade|as_crispy_field }}
+            </div>
+            <div class="col-md-1">
+                <label for="id_uf" class="form-label"></label>
+                {{ form.uf|as_crispy_field }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-endereco" class="btn btn-secondary btn-sm mt-2">Adicionar Endereço</button>
+
+    <!-- Profissões -->
     <h2>Profissões</h2>
     {{ profissao_formset.management_form }}
-    {% for form in profissao_formset %}
-        {{ form.as_p }}
-    {% endfor %}
+    <div id="profissoes-container">
+        <!-- Formulário base para clonagem -->
+        <div class="profissao-form row g-1 mb-2" style="display: none;">
+            <div class="col-md-4">
+                <label for="id_profissao" class="form-label"></label>
+                {{ profissao_formset.empty_form.profissao|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_cargo" class="form-label"></label>
+                {{ profissao_formset.empty_form.cargo|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_local_trabalho" class="form-label"></label>
+                {{ profissao_formset.empty_form.local_trabalho|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_data_admissao" class="form-label"></label>
+                {{ profissao_formset.empty_form.data_admissao|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_renda" class="form-label"></label>
+                {{ profissao_formset.empty_form.renda|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_outras_rendas" class="form-label"></label>
+                {{ profissao_formset.empty_form.outras_rendas|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_fone_lt" class="form-label"></label>
+                {{ profissao_formset.empty_form.fone_lt|as_crispy_field }}
+            </div>
+        </div>
 
-    <button type="submit">Salvar</button>
+        {% for form in profissao_formset %}
+        <div class="profissao-form row g-1 mb-2">
+            <div class="col-md-4">
+                <label for="id_profissao" class="form-label"></label>
+                {{ form.profissao|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_cargo" class="form-label"></label>
+                {{ form.cargo|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_local_trabalho" class="form-label">o</label>
+                {{ form.local_trabalho|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_data_admissao" class="form-label"></label>
+                {{ form.data_admissao|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_renda" class="form-label"></label>
+                {{ form.renda|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_outras_rendas" class="form-label"></label>
+                {{ form.outras_rendas|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                <label for="id_fone_lt" class="form-label"></label>
+                {{ form.fone_lt|as_crispy_field }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-profissao" class="btn btn-secondary btn-sm mt-2">Adicionar Profissão</button>
+
+
+    <div id="bottom-buttons">
+        <button type="button" class="btn-voltar" onclick="window.location.href='{% url 'clientes:cliente_list' %}'">Voltar</button>
+        <button type="submit" class="btn-salvar">Salvar</button>
+    </div>
+
 </form>
 
+<!-- Script permanece o mesmo -->
+<script>
+    function addForm(containerId, totalFormsId, formClass) {
+        const container = document.getElementById(containerId);
+        const totalForms = document.getElementById(totalFormsId);
 
-</body>
-</html>
+        if (!container || !totalForms) {
+            console.error(`Container ou totalForms não encontrado: ${containerId}, ${totalFormsId}`);
+            return;
+        }
+
+        const newFormIndex = totalForms.value;
+        const emptyForm = container.querySelector(`.${formClass}`);
+
+        if (!emptyForm) {
+            console.error(`Nenhum formulário encontrado com a classe ${formClass}`);
+            return;
+        }
+
+        const newForm = emptyForm.cloneNode(true);
+        newForm.innerHTML = newForm.innerHTML.replace(/-__prefix__-/g, `-${newFormIndex}-`);
+        newForm.style.display = 'flex';
+        container.appendChild(newForm);
+
+        totalForms.value = parseInt(totalForms.value) + 1;
+    }
+
+    document.getElementById('add-endereco').addEventListener('click', function() {
+        addForm('enderecos-container', 'id_enderecos-TOTAL_FORMS', 'endereco-form');
+    });
+
+    document.getElementById('add-profissao').addEventListener('click', function() {
+        addForm('profissoes-container', 'id_profissoes-TOTAL_FORMS', 'profissao-form');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post" class="row g-1" id="financeiraForm">
+    {% csrf_token %}
+
+    <div class="card formulario-card mb-4">
+        <div class="card-header">
+            Dados da Financeira
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6 form-floating">
+                    {{ financeira_form.nome_financeira }}
+                    <label for="{{ financeira_form.nome_financeira.id_for_label }}">
+                        {{ financeira_form.nome_financeira.label }}
+                    </label>
+                </div>
+                <div class="col-md-6 form-floating">
+                    {{ financeira_form.cnpj }}
+                    <label for="{{ financeira_form.cnpj.id_for_label }}">
+                        {{ financeira_form.cnpj.label }}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card formulario-card mb-4">
+        <div class="card-header">
+            Departamentos
+        </div>
+        {{ departamento_formset.management_form }}
+        <div class="card-body">
+            <div class="row g-3 mb-2 empty-departamento-form" style="display: none;">
+                <div class="col-md-3 form-floating">
+                    {{ departamento_formset.empty_form.nome_departamento }}
+                    <label for="{{ departamento_formset.empty_form.nome_departamento.id_for_label }}">{{ departamento_formset.empty_form.nome_departamento.label }}</label>
+                </div>
+                <div class="col-md-3 form-floating">
+                    {{ departamento_formset.empty_form.telefone_fixo }}
+                    <label for="{{ departamento_formset.empty_form.telefone_fixo.id_for_label }}">{{ departamento_formset.empty_form.telefone_fixo.label }}</label>
+                </div>
+                <div class="col-md-3 form-floating">
+                    {{ departamento_formset.empty_form.celular }}
+                    <label for="{{ departamento_formset.empty_form.celular.id_for_label }}">{{ departamento_formset.empty_form.celular.label }}</label>
+                </div>
+                <div class="col-md-3 form-floating">
+                    {{ departamento_formset.empty_form.email }}
+                    <label for="{{ departamento_formset.empty_form.email.id_for_label }}">{{ departamento_formset.empty_form.email.label }}</label>
+                </div>
+            </div>
+
+            <div id="departamentos-container">
+                {% for form in departamento_formset %}
+                <div class="row g-3 mb-2 departamento-form">
+                    <div class="col-md-3 form-floating">
+                        {{ form.nome_departamento }}
+                        <label for="{{ form.nome_departamento.id_for_label }}">{{ form.nome_departamento.label }}</label>
+                    </div>
+                    <div class="col-md-3 form-floating">
+                        {{ form.telefone_fixo }}
+                        <label for="{{ form.telefone_fixo.id_for_label }}">{{ form.telefone_fixo.label }}</label>
+                    </div>
+                    <div class="col-md-3 form-floating">
+                        {{ form.celular }}
+                        <label for="{{ form.celular.id_for_label }}">{{ form.celular.label }}</label>
+                    </div>
+                    <div class="col-md-3 form-floating">
+                        {{ form.email }}
+                        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-departamento" class="btn btn-secondary btn-sm add-row">Adicionar Departamento</button>
+        </div>
+    </div>
+
+    <div class="card formulario-card mb-4">
+        <div class="card-header">
+            Produtos
+        </div>
+        {{ produto_formset.management_form }}
+        <div class="card-body">
+            <div class="row g-3 mb-2 empty-produto-form" style="display: none;">
+                <div class="col-md-3 form-floating">
+                    {{ produto_formset.empty_form.nome_produto }}
+                    <label for="{{ produto_formset.empty_form.nome_produto.id_for_label }}">{{ produto_formset.empty_form.nome_produto.label }}</label>
+                </div>
+                <div class="col-md-3 form-floating">
+                    {{ produto_formset.empty_form.modalidade }}
+                    <label for="{{ produto_formset.empty_form.modalidade.id_for_label }}">{{ produto_formset.empty_form.modalidade.label }}</label>
+                </div>
+                <div class="col-md-3 form-floating">
+                    {{ produto_formset.empty_form.segmento }}
+                    <label for="{{ produto_formset.empty_form.segmento.id_for_label }}">{{ produto_formset.empty_form.segmento.label }}</label>
+                </div>
+                <div class="col-md-3 form-floating">
+                    {{ produto_formset.empty_form.comissao_percentual }}
+                    <label for="{{ produto_formset.empty_form.comissao_percentual.id_for_label }}">{{ produto_formset.empty_form.comissao_percentual.label }}</label>
+                </div>
+            </div>
+
+            <div id="produtos-container">
+                {% for form in produto_formset %}
+                <div class="row g-3 mb-2 produto-form">
+                    <div class="col-md-3 form-floating">
+                        {{ form.nome_produto }}
+                        <label for="{{ form.nome_produto.id_for_label }}">{{ form.nome_produto.label }}</label>
+                    </div>
+                    <div class="col-md-3 form-floating">
+                        {{ form.modalidade }}
+                        <label for="{{ form.modalidade.id_for_label }}">{{ form.modalidade.label }}</label>
+                    </div>
+                    <div class="col-md-3 form-floating">
+                        {{ form.segmento }}
+                        <label for="{{ form.segmento.id_for_label }}">{{ form.segmento.label }}</label>
+                    </div>
+                    <div class="col-md-3 form-floating">
+                        {{ form.comissao_percentual }}
+                        <label for="{{ form.comissao_percentual.id_for_label }}">{{ form.comissao_percentual.label }}</label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-produto" class="btn btn-secondary btn-sm add-row">Adicionar Produto</button>
+        </div>
+    </div>
+
+    <div class="col-12 mt-3">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </div>
+
+    {% if produto_formset.non_form_errors %}
+    <div class="alert alert-danger">
+        {{ produto_formset.non_form_errors }}
+    </div>
+    {% endif %}
+    {% for form in produto_formset %}
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            Erros no Produto: {{ form.errors }}
+        </div>
+        {% endif %}
+    {% endfor %}
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+    $(document).ready(function() {
+        function aplicarMascaras() {
+            $('input[id*="cnpj"]').mask('00.000.000/0000-00', { reverse: true });
+            $('input[id*="telefone_fixo"]').mask('(00) 0000-0000');
+            $('input[id*="celular"]').mask('(00) 00000-0000');
+        }
+
+        $(document).on('click', '.add-row', function() {
+            setTimeout(aplicarMascaras, 100);
+        });
+
+        $('#financeiraForm').on('submit', function() {
+            $('input[id*="cnpj"], input[id*="telefone_fixo"], input[id*="celular"]').each(function() {
+                $(this).val($(this).cleanVal());
+            });
+        });
+
+        function addForm(containerId, totalFormsId, emptyFormClass) {
+            const container = $('#' + containerId);
+            const totalForms = $('#' + totalFormsId);
+            let newIndex = parseInt(totalForms.val());
+
+            const emptyFormEl = $(`.${emptyFormClass}`).first().clone(true);
+            emptyFormEl.removeClass(emptyFormClass);
+            emptyFormEl.show();
+
+            emptyFormEl.html(emptyFormEl.html().replace(/__prefix__/g, newIndex));
+            container.append(emptyFormEl);
+            totalForms.val(newIndex + 1);
+            aplicarMascaras();
+        }
+
+        $('#add-departamento').click(function() {
+            addForm('departamentos-container', 'id_departamentos-TOTAL_FORMS', 'empty-departamento-form');
+        });
+
+        $('#add-produto').click(function() {
+            addForm('produtos-container', 'id_produtos-TOTAL_FORMS', 'empty-produto-form');
+        });
+
+        aplicarMascaras();
+    });
+</script>
+{% endblock %}

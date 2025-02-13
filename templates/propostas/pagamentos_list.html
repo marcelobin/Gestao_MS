@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container my-4">
+    <h1 class="mb-4">Pagamentos Realizados</h1>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nº do Recibo</th>
+          <th>Loja</th>
+          <th>Data do Pagamento</th>
+          <th>Total Financiado</th>
+          <th>Total Comissão</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pagamento in pagamentos %}
+          <tr>
+            <td>{{ pagamento.numero_recibo }}</td>
+            <td>{{ pagamento.loja.nm_fantasia }}</td>
+            <td>{{ pagamento.data_pagamento|date:"d/m/Y" }}</td>
+            <td>{{ pagamento.total_financiado|floatformat:2 }}</td>
+            <td>{{ pagamento.total_comissao|floatformat:2 }}</td>
+            <td>
+              <!-- Link para ver o detalhe do recibo -->
+              <a href="{% url 'propostas:detalhe_recibo' pagamento.pk %}" class="btn btn-sm btn-primary">
+                Detalhes
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center">Nenhum pagamento realizado.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

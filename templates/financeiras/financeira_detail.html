@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h5 class=" ">Detalhes da Financeira</h5>
+<hr>
+<p><strong>Nome:</strong> {{ financeira.nome_financeira }}</p>
+<p><strong>CNPJ:</strong> {{ financeira.cnpj }}</p>
+
+<h5 class=" ">Departamentos</h5>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Telefone Fixo</th>
+            <th>Celular</th>
+            <th>E-mail</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for departamento in departamentos %}
+        <tr>
+            <td>{{ departamento.nome_departamento }}</td>
+            <td>{{ departamento.fone_fixo }}</td>
+            <td>{{ departamento.celular }}</td>
+            <td>{{ departamento.email }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Nenhum departamento cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h5 class=" ">Produtos</h5>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Modalidade</th>
+            <th>Subsegmento</th>
+            <th>Comissão (%)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for produto in produtos %}
+        <tr>
+            <td>{{ produto.nome_produto }}</td>
+            <td>{{ produto.modalidade.nome_modalidade }}</td>
+            <td>{{ produto.segmento.nome_segmento }}</td>
+            <td>{{ produto.comissao_percentual }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">Nenhum produto cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div id="bottom-buttons">
+<!-- Botão para Editar -->
+<button class="btn-salvar"  onclick="window.location.href='{% url 'financeiras:financeira_update' financeira.id %}'">Editar</button>
+
+<!-- Botão para Voltar -->
+<button class="btn-voltar"  onclick="window.location.href='{% url 'financeiras:financeira_list' %}'">Voltar</button>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+
+
+{% extends 'base.html' %}
+{% load propostas_filters %}
+{% block content %}
+  <div class="container my-4">
+    <h1 class="mb-4">Recibo de Pagamento - {{ recibo.numero_recibo }}</h1>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>{{ recibo.loja.nm_fantasia }}</h3>
+        <p><strong>Data do Pagamento:</strong> {{ recibo.data_pagamento|date:"d/m/Y" }}</p>
+      </div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Nº Proposta</th>
+              <th>Cliente</th>
+              <th>Valor Financiado</th>
+              <th>Comissão (1,2%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for proposta in propostas %}
+              <tr>
+                <td>{{ proposta.nr_proposta }}</td>
+                <td>{{ proposta.cliente.nm_cliente }}</td>
+                <td>R$ {{ proposta.vl_financiado|floatformat:2 }}</td>
+                <td>R$ {{ proposta.vl_financiado|mul:0.012|floatformat:2 }}</td>
+
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"><strong>Total</strong></td>
+              <td><strong>R$ {{ recibo.total_financiado|floatformat:2 }}</strong></td>
+              <td><strong>R$ {{ recibo.total_comissao|floatformat:2 }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    <a href="{% url 'propostas:gerar_recibo_pdf' recibo.pk %}" class="btn btn-danger mt-3">
+      <i class="fa fa-file-pdf"></i> Baixar PDF
+    </a>
+    <a href="{% url 'propostas:lojas_elegiveis' %}" class="btn btn-primary mt-3">Voltar</a>
+  </div>
+{% endblock %}

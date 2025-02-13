@@ -1,0 +1,534 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<form method="post" class="row g-1" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- ========== DADOS DA LOJA ========== -->
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title mb-3">Dados da Loja</h2>
+            <div class="row g-1 mb-2">
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field form.nr_cnpj class="form-control" placeholder="CNPJ" %}
+                        <label for="{{ form.nr_cnpj.id_for_label }}">CNPJ</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field form.dt_constituicao class="form-control" placeholder="Data de Constituição" %}
+                        <label for="{{ form.dt_constituicao.id_for_label }}">Data de Constituição</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        {% render_field form.razao_social class="form-control" placeholder="Razão Social" %}
+                        <label for="{{ form.razao_social.id_for_label }}">Razão Social</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        {% render_field form.nm_fantasia class="form-control" placeholder="Nome Fantasia" %}
+                        <label for="{{ form.nm_fantasia.id_for_label }}">Nome Fantasia</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-1 mb-2">
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field form.cep class="form-control" placeholder="CEP" %}
+                        <label for="{{ form.cep.id_for_label }}">CEP</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        {% render_field form.endereco class="form-control" placeholder="Endereço" %}
+                        <label for="{{ form.endereco.id_for_label }}">Endereço</label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-floating">
+                        {% render_field form.nro class="form-control" placeholder="Número" %}
+                        <label for="{{ form.nro.id_for_label }}">Nº</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field form.complemento class="form-control" placeholder="Complemento" %}
+                        <label for="{{ form.complemento.id_for_label }}">Complemento</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field form.bairro class="form-control" placeholder="Bairro" %}
+                        <label for="{{ form.bairro.id_for_label }}">Bairro</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-1 mb-2">
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field form.cidade class="form-control" placeholder="Cidade" %}
+                        <label for="{{ form.cidade.id_for_label }}">Cidade</label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-floating">
+                        {% render_field form.uf class="form-control" placeholder="UF" %}
+                        <label for="{{ form.uf.id_for_label }}">UF</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field form.fone_fixo class="form-control" placeholder="Telefone Fixo" %}
+                        <label for="{{ form.fone_fixo.id_for_label }}">Telefone Fixo</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field form.celular class="form-control" placeholder="Celular" %}
+                        <label for="{{ form.celular.id_for_label }}">Celular</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        {% render_field form.email class="form-control" placeholder="E-mail" %}
+                        <label for="{{ form.email.id_for_label }}">E-mail</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-1 mb-2">
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        {% render_field form.operador class="form-control" placeholder="Operador" %}
+                        <label for="{{ form.operador.id_for_label }}">Operador</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field form.filial class="form-control" placeholder="Filial" %}
+                        <label for="{{ form.filial.id_for_label }}">Filial</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SÓCIOS ========== -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <h2 class="card-title mb-3">Sócios</h2>
+            {{ socio_formset.management_form }}
+            <!-- Formulário base invisível para clonagem -->
+            <div class="socio-form row g-1 mb-2" style="display: none;" id="empty-socio-form">
+                {{ socio_formset.empty_form.id }}
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field socio_formset.empty_form.cpf_socio class="form-control" placeholder="CPF" %}
+                        <label for="{{ socio_formset.empty_form.cpf_socio.id_for_label }}">CPF</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        {% render_field socio_formset.empty_form.nome_socio class="form-control" placeholder="Nome" %}
+                        <label for="{{ socio_formset.empty_form.nome_socio.id_for_label }}">Nome</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field socio_formset.empty_form.dt_nascimento_socio class="form-control" placeholder="Data de Nascimento" %}
+                        <label for="{{ socio_formset.empty_form.dt_nascimento_socio.id_for_label }}">Data de Nascimento</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field socio_formset.empty_form.celular class="form-control" placeholder="Celular" %}
+                        <label for="{{ socio_formset.empty_form.celular.id_for_label }}">Celular</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field socio_formset.empty_form.email class="form-control" placeholder="E-mail" %}
+                        <label for="{{ socio_formset.empty_form.email.id_for_label }}">E-mail</label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    {{ socio_formset.empty_form.DELETE }}
+                </div>
+            </div>
+            <div id="socios-container">
+                {% for form in socio_formset %}
+                <div class="socio-form row g-1 mb-2">
+                    {{ form.id }}
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            {% render_field form.cpf_socio class="form-control" placeholder="CPF" %}
+                            <label for="{{ form.cpf_socio.id_for_label }}">CPF</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            {% render_field form.nome_socio class="form-control" placeholder="Nome" %}
+                            <label for="{{ form.nome_socio.id_for_label }}">Nome</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            {% render_field form.dt_nascimento_socio class="form-control" placeholder="Data de Nascimento" %}
+                            <label for="{{ form.dt_nascimento_socio.id_for_label }}">Data de Nascimento</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            {% render_field form.celular class="form-control" placeholder="Celular" %}
+                            <label for="{{ form.celular.id_for_label }}">Celular</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            {% render_field form.email class="form-control" placeholder="E-mail" %}
+                            <label for="{{ form.email.id_for_label }}">E-mail</label>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        {{ form.DELETE }} Excluir
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="add-socio">Adicionar Sócio</button>
+        </div>
+    </div>
+
+    <!-- ========== VENDEDORES ========== -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <h2 class="card-title mb-3">Vendedores</h2>
+            {{ vendedor_formset.management_form }}
+            <div class="vendedor-form row g-1 mb-2" style="display:none;" id="empty-vendedor-form">
+                {{ vendedor_formset.empty_form.id }}
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        {% render_field vendedor_formset.empty_form.nome_vendedor class="form-control" placeholder="Nome" %}
+                        <label for="{{ vendedor_formset.empty_form.nome_vendedor.id_for_label }}">Nome</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field vendedor_formset.empty_form.chave_pix class="form-control" placeholder="Chave Pix" %}
+                        <label for="{{ vendedor_formset.empty_form.chave_pix.id_for_label }}">Chave Pix</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field vendedor_formset.empty_form.celular_vendedor class="form-control" placeholder="Celular" %}
+                        <label for="{{ vendedor_formset.empty_form.celular_vendedor.id_for_label }}">Celular</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        {% render_field vendedor_formset.empty_form.email_vendedor class="form-control" placeholder="E-mail" %}
+                        <label for="{{ vendedor_formset.empty_form.email_vendedor.id_for_label }}">E-mail</label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    {{ vendedor_formset.empty_form.DELETE }}
+                </div>
+            </div>
+            <div id="vendedores-container">
+                {% for form in vendedor_formset %}
+                <div class="vendedor-form row g-1 mb-2">
+                    {{ form.id }}
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            {% render_field form.nome_vendedor class="form-control" placeholder="Nome" %}
+                            <label for="{{ form.nome_vendedor.id_for_label }}">Nome</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            {% render_field form.chave_pix class="form-control" placeholder="Chave Pix" %}
+                            <label for="{{ form.chave_pix.id_for_label }}">Chave Pix</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            {% render_field form.celular_vendedor class="form-control" placeholder="Celular" %}
+                            <label for="{{ form.celular_vendedor.id_for_label }}">Celular</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            {% render_field form.email_vendedor class="form-control" placeholder="E-mail" %}
+                            <label for="{{ form.email_vendedor.id_for_label }}">E-mail</label>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        {{ form.DELETE }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="add-vendedor">Adicionar Vendedor</button>
+        </div>
+    </div>
+
+    <!-- ========== DADOS BANCÁRIOS ========== -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <h2 class="card-title mb-3">Dados Bancários</h2>
+            {{ dadosbancarios_formset.management_form }}
+            <!-- Template para novos formulários -->
+            <div class="dadosbanc-form row g-1 mb-2" style="display:none;" id="empty-dadosbancarios-form">
+                {{ dadosbancarios_formset.empty_form.id }}
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        {% render_field dadosbancarios_formset.empty_form.codigo class="form-control" placeholder="Código do Banco" %}
+                        <label for="{{ dadosbancarios_formset.empty_form.codigo.id_for_label }}">Código do Banco</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field dadosbancarios_formset.empty_form.agencia class="form-control" placeholder="Agência" %}
+                        <label for="{{ dadosbancarios_formset.empty_form.agencia.id_for_label }}">Agência</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field dadosbancarios_formset.empty_form.conta class="form-control" placeholder="Conta" %}
+                        <label for="{{ dadosbancarios_formset.empty_form.conta.id_for_label }}">Conta</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    {{ dadosbancarios_formset.empty_form.DELETE }}
+                </div>
+            </div>
+            <div id="dadosbancarios-container">
+                {% for form in dadosbancarios_formset %}
+                <div class="dadosbanc-form row g-1 mb-2">
+                    {{ form.id }}
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            {% render_field form.codigo class="form-control" placeholder="Código do Banco" %}
+                            <label for="{{ form.codigo.id_for_label }}">Código do Banco</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            {% render_field form.agencia class="form-control" placeholder="Agência" %}
+                            <label for="{{ form.agencia.id_for_label }}">Agência</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            {% render_field form.conta class="form-control" placeholder="Conta" %}
+                            <label for="{{ form.conta.id_for_label }}">Conta</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.DELETE }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="add-dadosbanc">Adicionar Dados Bancários</button>
+        </div>
+    </div>
+
+    <!-- ========== DOCUMENTOS / ANEXOS ========== -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <h2 class="card-title mb-3">Documentos / Anexos</h2>
+            {{ anexo_formset.management_form }}
+            <!-- Template para novos formulários de anexo -->
+            <div class="anexo-form row g-1 mb-2" style="display:none;" id="empty-anexo-form">
+                {{ anexo_formset.empty_form.id }}
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        {% render_field anexo_formset.empty_form.tipo_documento class="form-control" placeholder="Tipo de Documento" %}
+                        <label for="{{ anexo_formset.empty_form.tipo_documento.id_for_label }}">Tipo de Documento</label>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="form-floating">
+                        {% render_field anexo_formset.empty_form.arquivo class="form-control" placeholder="Arquivo" %}
+                        <label for="{{ anexo_formset.empty_form.arquivo.id_for_label }}">Arquivo</label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    {{ anexo_formset.empty_form.DELETE }}
+                </div>
+            </div>
+            <div id="anexos-container">
+                {% for form in anexo_formset %}
+                <div class="anexo-form row g-1 mb-2">
+                    {{ form.id }}
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            {% render_field form.tipo_documento class="form-control" placeholder="Tipo de Documento" %}
+                            <label for="{{ form.tipo_documento.id_for_label }}">Tipo de Documento</label>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="form-floating">
+                            {% render_field form.arquivo class="form-control" placeholder="Arquivo" %}
+                            <label for="{{ form.arquivo.id_for_label }}">Arquivo</label>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        {{ form.DELETE }} Excluir
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="add-anexo">Adicionar Documento</button>
+        </div>
+    </div>
+
+    <!-- ========== ACESSOS ÀS FINANCEIRAS ========== -->
+    <div class="card mt-3">
+        <div class="card-body">
+            <h2 class="card-title mb-3">Acessos</h2>
+            {{ acesso_formset.management_form }}
+            <div class="acesso-form row g-1 mb-2" style="display:none;" id="empty-acesso-form">
+                {{ acesso_formset.empty_form.id }}
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        {% render_field acesso_formset.empty_form.financeira class="form-control" placeholder="Financeira" %}
+                        <label for="{{ acesso_formset.empty_form.financeira.id_for_label }}">Financeira</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating">
+                        {% render_field acesso_formset.empty_form.codigo_acesso class="form-control" placeholder="Código de Acesso" %}
+                        <label for="{{ acesso_formset.empty_form.codigo_acesso.id_for_label }}">Código de Acesso</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        {% render_field acesso_formset.empty_form.nm_cadastro_fin class="form-control" placeholder="Nome Cadastro" %}
+                        <label for="{{ acesso_formset.empty_form.nm_cadastro_fin.id_for_label }}">Nome Cadastro</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    {{ acesso_formset.empty_form.DELETE }}
+                </div>
+            </div>
+            <div id="acessos-container">
+                {% for form in acesso_formset %}
+                <div class="acesso-form row g-1 mb-2">
+                    {{ form.id }}
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            {% render_field form.financeira class="form-control" placeholder="Financeira" %}
+                            <label for="{{ form.financeira.id_for_label }}">Financeira</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-floating">
+                            {% render_field form.codigo_acesso class="form-control" placeholder="Código de Acesso" %}
+                            <label for="{{ form.codigo_acesso.id_for_label }}">Código de Acesso</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            {% render_field form.nm_cadastro_fin class="form-control" placeholder="Nome Cadastro" %}
+                            <label for="{{ form.nm_cadastro_fin.id_for_label }}">Nome Cadastro</label>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        {{ form.DELETE }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="add-acesso">Adicionar Acesso</button>
+        </div>
+    </div>
+
+    <!-- BOTÃO DE SALVAR -->
+    <div class="col-12 mt-3">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </div>
+</form>
+
+<!-- jQuery, jQuery Mask e Select2 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        console.log("Documento carregado. Inicializando...");
+
+        // Função para aplicar máscaras nos campos existentes
+        function aplicarMascaras() {
+            console.log("Aplicando máscaras...");
+            $('#id_nr_cnpj').mask('99.999.999/9999-99'); // CNPJ
+            $('[id$="-cpf_socio"]').mask('999.999.999-99'); // CPF Sócios
+            $('[id^="id_cep"]').mask('99999-999'); // CEP
+            $('#id_fone_fixo').mask('(99) 9999-9999'); // Telefone fixo
+            $('#id_celular').mask('(99) 99999-9999'); // Celular empresa
+            $('[id$="-celular"]').mask('(99) 99999-9999'); // Celular Sócio/Vendedor
+            console.log("Máscaras aplicadas aos campos estáticos.");
+        }
+
+        // Função para reaplicar máscaras após adicionar novos elementos dinâmicos
+        function reaplicarMascaras() {
+            console.log("Reaplicando máscaras para novos campos...");
+            $('#socios-container .socio-form:last [id$="-cpf_socio"]').each(function() {
+                console.log("Aplicando máscara no CPF:", $(this).attr('id'));
+                $(this).mask('999.999.999-99');
+            });
+            $('#socios-container .socio-form:last [id$="-celular"]').each(function() {
+                console.log("Aplicando máscara no Celular:", $(this).attr('id'));
+                $(this).mask('(99) 99999-9999');
+            });
+            console.log("Máscaras aplicadas aos novos campos.");
+        }
+
+        // Aplica máscaras no carregamento inicial
+        aplicarMascaras();
+
+        // Função para adicionar novos formulários dinâmicos
+        function addForm(containerId, totalFormsId, formClass) {
+            const container = $(`#${containerId}`);
+            const totalForms = $(`#${totalFormsId}`);
+            const newIndex = parseInt(totalForms.val());
+            const emptyForm = $(`#${formClass}`).clone();
+            emptyForm.removeAttr('id');
+            emptyForm.attr('style', '');
+            emptyForm.html(emptyForm.html().replace(/__prefix__/g, newIndex));
+            container.append(emptyForm);
+            totalForms.val(newIndex + 1);
+            console.log(`Adicionando novo formulário no container ${containerId} (índice: ${newIndex}).`);
+            reaplicarMascaras();
+        }
+
+        // Eventos de clique para adicionar novos formulários
+        $('#add-socio').on('click', function () {
+            addForm('socios-container', 'id_socios-TOTAL_FORMS', 'empty-socio-form');
+        });
+        $('#add-vendedor').on('click', function () {
+            addForm('vendedores-container', 'id_vendedores-TOTAL_FORMS', 'empty-vendedor-form');
+        });
+        $('#add-dadosbanc').on('click', function () {
+            addForm('dadosbancarios-container', 'id_dadosbancarios-TOTAL_FORMS', 'empty-dadosbancarios-form');
+        });
+        $('#add-acesso').on('click', function () {
+            addForm('acessos-container', 'id_acessos_financeiras-TOTAL_FORMS', 'empty-acesso-form');
+        });
+        $('#add-anexo').on('click', function () {
+            addForm('anexos-container', 'id_anexos-TOTAL_FORMS', 'empty-anexo-form');
+        });
+    });
+</script>
+
+{% endblock %}

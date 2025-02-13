@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+{% load masks %}
+
+{% block content %}
+
+<div class="container my-4" id="main-content">
+
+  <!-- Título da Página -->
+  <div class="d-flex align-items-center mb-4 titulo-container">
+    <i class="fas fa-file-alt titulo-icone"></i>
+    <h4 class="titulo-texto">Proposta {{ proposta.nr_proposta }}</h4>
+  </div>
+
+  <!-- DADOS DA PROPOSTA -->
+  <div class="card formulario-card mb-4">
+    <div class="card-header">
+      <i class="fas fa-clipboard-list me-2"></i> Dados da Proposta
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ proposta.nr_proposta }}" class="form-control" readonly>
+          <label>Número da Proposta</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ proposta.vl_financiado|mask_currency }}" class="form-control" readonly>
+          <label>Valor Financiado</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ proposta.prazo }}" class="form-control" readonly>
+          <label>Prazo</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ proposta.vl_parcela|mask_currency }}" class="form-control" readonly>
+          <label>Valor da Parcela</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ proposta.dt_proposta|date:'d/m/Y' }}" class="form-control" readonly>
+          <label>Data da Proposta</label>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-3">
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ proposta.operador }}" class="form-control" readonly>
+          <label>Operador</label>
+        </div>
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ proposta.loja }}" class="form-control" readonly>
+          <label>Loja</label>
+        </div>
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ proposta.vendedor }}" class="form-control" readonly>
+          <label>Vendedor</label>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-3">
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ proposta.financeira }}" class="form-control" readonly>
+          <label>Financeira</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ proposta.modalidade }}" class="form-control" readonly>
+          <label>Modalidade</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ proposta.segmento }}" class="form-control" readonly>
+          <label>Segmento</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ proposta.produto }}" class="form-control" readonly>
+          <label>Produto</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ proposta.status }}" class="form-control" readonly>
+          <label>Status</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ proposta.dt_pagamento|date:'d/m/Y' }}" class="form-control" readonly>
+          <label>Data de Pagamento</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DADOS DO VEÍCULO -->
+  <div class="card formulario-card mb-4">
+    <div class="card-header">
+      <i class="fas fa-car me-2"></i> Dados do Veículo
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ veiculo.marca }}" class="form-control" readonly>
+          <label>Marca</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ veiculo.modelo }}" class="form-control" readonly>
+          <label>Modelo</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ veiculo.ano_fabricacao }}" class="form-control" readonly>
+          <label>Ano de Fabricação</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ veiculo.ano_modelo }}" class="form-control" readonly>
+          <label>Ano Modelo</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ veiculo.vl_veiculo|mask_currency }}" class="form-control" readonly>
+          <label>Valor do Veículo</label>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-3">
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ veiculo.placa }}" class="form-control" readonly>
+          <label>Placa</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ veiculo.renavam }}" class="form-control" readonly>
+          <label>Renavam</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ veiculo.chassi }}" class="form-control" readonly>
+          <label>Chassi</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DADOS DO CLIENTE -->
+  <div class="card formulario-card mb-4">
+    <div class="card-header">
+      <i class="fas fa-user me-2"></i> Dados do Cliente
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ cliente.nr_cpf|mask_cpf }}" class="form-control" readonly>
+          <label>CPF</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ cliente.nm_cliente }}" class="form-control" readonly>
+          <label>Nome</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ cliente.dt_nascimento|date:'d/m/Y' }}" class="form-control" readonly>
+          <label>Data de Nascimento</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ cliente.sexo }}" class="form-control" readonly>
+          <label>Sexo</label>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-3">
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ cliente.rg_cliente }}" class="form-control" readonly>
+          <label>RG</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ cliente.nm_mae }}" class="form-control" readonly>
+          <label>Nome da Mãe</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENDEREÇO -->
+  <div class="card formulario-card mb-4">
+    <div class="card-header">
+      <i class="fas fa-home me-2"></i> Endereço
+    </div>
+    <div class="card-body">
+      {% for endereco in enderecos %}
+      <div class="row g-3">
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ endereco.cep|mask_cep }}" class="form-control" readonly>
+          <label>CEP</label>
+        </div>
+        <div class="col-md-6 form-floating">
+          <input type="text" value="{{ endereco.endereco }}" class="form-control" readonly>
+          <label>Endereço</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ endereco.nro }}" class="form-control" readonly>
+          <label>Número</label>
+        </div>
+      </div>
+      <div class="row g-3 mt-3">
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ endereco.bairro }}" class="form-control" readonly>
+          <label>Bairro</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ endereco.cidade }}" class="form-control" readonly>
+          <label>Cidade</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input type="text" value="{{ endereco.uf }}" class="form-control" readonly>
+          <label>UF</label>
+        </div>
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ endereco.complemento }}" class="form-control" readonly>
+          <label>Complemento</label>
+        </div>
+      </div>
+      <hr>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- CONTATOS -->
+  <div class="card formulario-card mb-4">
+    <div class="card-header">
+      <i class="fas fa-phone me-2"></i> Contatos
+    </div>
+    <div class="card-body">
+      {% for contato in contatos %}
+      <div class="row g-3">
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ contato.telefone_fixo|mask_phone }}" class="form-control" readonly>
+          <label>Telefone Fixo</label>
+        </div>
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ contato.celular|mask_phone }}" class="form-control" readonly>
+          <label>Celular</label>
+        </div>
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ contato.email }}" class="form-control" readonly>
+          <label>Email</label>
+        </div>
+      </div>
+      <hr>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- DADOS COMERCIAIS -->
+  <div class="card formulario-card mb-4">
+    <div class="card-header">
+      <i class="fas fa-briefcase me-2"></i> Dados Comerciais
+    </div>
+    <div class="card-body">
+      {% for profissao in profissoes %}
+      <div class="row g-3">
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ profissao.profissao }}" class="form-control" readonly>
+          <label>Profissão</label>
+        </div>
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ profissao.cargo }}" class="form-control" readonly>
+          <label>Cargo</label>
+        </div>
+        <div class="col-md-4 form-floating">
+          <input type="text" value="{{ profissao.local_trabalho }}" class="form-control" readonly>
+          <label>Local de Trabalho</label>
+        </div>
+      </div>
+      <div class="row g-3 mt-3">
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ profissao.data_admissao|date:'d/m/Y' }}" class="form-control" readonly>
+          <label>Data de Admissão</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ profissao.renda|mask_currency }}" class="form-control" readonly>
+          <label>Renda</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ profissao.outras_rendas|mask_currency }}" class="form-control" readonly>
+          <label>Outras Rendas</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input type="text" value="{{ profissao.fone_lt|mask_phone }}" class="form-control" readonly>
+          <label>Telefone do Trabalho</label>
+        </div>
+      </div>
+      <hr>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+    </form>
+
+    <!-- BOTÕES DE AÇÃO -->
+    <button>
+      <a href="{% url 'propostas:editar_proposta' proposta.id %}" id="btn">
+        <div class="btn-positive-half" >
+            Editar Proposta
+        </div>
+      </a>
+    </button>
+    <button>
+      <a href="{% url 'propostas:listar_propostas' %}" id="btn">
+        <div class="btn-negative-half">
+            Voltar
+        </div>
+      </a>
+    </button>    
+    
+
+{% endblock %}

@@ -1,0 +1,441 @@
+<!--listar_propostas.html-->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div>
+        <div class="container-fluid" style="padding-top:1px;">
+            <div class="mb-3" style="margin-top: 10px;">
+                <h6 class="card-title d-inline-block" style="color:green; cursor: pointer;">
+                    Filtros
+                </h6>
+                <div>
+                    <div class="mb-3">
+                        <form method="get" id="filterForm">
+                            <div class="row g-3">
+                                <div class="col-md-3 form-floating">
+                                    <select name="financeira" id="filtro_financeira" class="form-select">
+                                        <option value="">Todas</option>
+                                        {% for financeira in financeiras %}
+                                        <option value="{{ financeira.id }}" {% if financeira.id == request.GET.financeira|add:0 %}selected{% endif %}>
+                                            {{ financeira.nome_financeira }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="filtro_financeira">Financeira</label>
+                                </div>
+            
+                                <div class="col-md-3 form-floating">
+                                    <select name="loja" id="filtro_loja" class="form-select">
+                                        <option value="">Todas</option>
+                                        {% for loja in lojas %}
+                                        <option value="{{ loja.id }}" {% if loja.id == request.GET.loja|add:0 %}selected{% endif %}>
+                                            {{ loja.nm_fantasia }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="filtro_loja">Loja</label>
+                                </div>
+            
+                                <div class="col-md-3 form-floating">
+                                    <select name="operador" id="filtro_operador" class="form-select">
+                                        <option value="">Todas</option>
+                                        {% for operador in operadores %}
+                                        <option value="{{ operador.id }}" {% if operador.id == request.GET.operador|add:0 %}selected{% endif %}>
+                                            {{ operador.nm_operador }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="filtro_operador">Operador</label>
+                                </div>
+            
+                                <div class="col-md-2 form-floating">
+                                    <select name="status" id="filtro_status" class="form-select">
+                                        <option value="">Todos</option>
+                                        {% for status in status_list %}
+                                        <option value="{{ status.ds_status }}" {% if request.GET.status == status.ds_status %}selected{% endif %}>
+                                            {{ status.ds_status }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="filtro_status">Status</label>
+                                </div>
+                            </div>
+            
+                            <div class="row g-3">
+                                <div class="col-md-2 form-floating">
+                                    <input type="date" name="dt_proposta_inicio" id="filtro_dt_proposta_inicio" class="form-control"  value="{{ request.GET.dt_proposta_inicio }}">
+                                    <label for="filtro_dt_proposta_inicio" style="margin-top:10px" >Data da Proposta (Início)</label>
+                                </div>
+                                <div class="col-md-2 form-floating">
+                                    <input type="date" name="dt_proposta_fim" id="filtro_dt_proposta_fim" class="form-control" value="{{ request.GET.dt_proposta_fim }}">
+                                    <label for="filtro_dt_proposta_fim" style="margin-top:10px">Data da Proposta (Fim)</label>
+                                </div>
+                                <div class="col-md-2 form-floating">
+                                    <input type="date" name="dt_pagamento_inicio" id="filtro_dt_pagamento_inicio" class="form-control" value="{{ request.GET.dt_pagamento_inicio }}">
+                                    <label for="filtro_dt_pagamento_inicio" style="margin-top:10px">Data de Pagamento (Início)</label>
+                                </div>
+                                <div class="col-md-2 form-floating">
+                                    <input type="date" name="dt_pagamento_fim" id="filtro_dt_pagamento_fim" class="form-control" value="{{ request.GET.dt_pagamento_fim }}">
+                                    <label for="filtro_dt_pagamento_fim" style="margin-top:10px">Data de Pagamento (Fim)</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="wrapper">
+                                        <!-- Botão de Filtrar -->
+                                        <div class="button">
+                                            <button type="submit" class="icon">
+                                                <i class="fa-solid fa-filter"></i>
+                                            </button>
+                                            <span>Filtrar</span>
+                                        </div>
+                                
+                                        <!-- Botão de Limpar Filtros -->
+                                        <a href="{% url 'propostas:listar_propostas' %}" class="button">
+                                            <div class="icon">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </div>
+                                            <span>Limpar Filtro</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tableFixHead">
+                <table id="propostasTable" class="table table-hover table-custom">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort-type="number">Número</th>
+                            <th class="sortable" data-sort-type="string">Cliente</th>
+                            <th class="sortable" data-sort-type="string">Financeira</th>
+                            <th class="sortable" data-sort-type="string">Operador</th>
+                            <th class="sortable" data-sort-type="string">Loja</th>
+                            <th class="sortable" data-sort-type="number" style="text-align:right;">
+                                Valor Financiado
+                            </th>
+                            <th class="sortable" data-sort-type="string" style="text-align:center;">
+                                Status
+                            </th>
+                            <th class="sortable" data-sort-type="date">Dt Proposta</th>
+                            <th class="sortable" data-sort-type="date">Dt Pagamento</th>
+                            <th class="sortable" data-sort-type="number" style="text-align:center;">
+                              Comissão
+                          </th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for proposta in page_obj %}
+                        <tr>
+                            <td>{{ proposta.nr_proposta }}</td>
+                            <td> {{ proposta.cliente.nm_cliente|title }} </td>
+                            <td>{{ proposta.financeira.nome_financeira|title }}</td>
+                            <td>{{ proposta.operador|title }}</td>
+                            <td>{{ proposta.loja.nm_fantasia|title }}</td>
+                            <td style="text-align:right;"> {{ proposta.vl_financiado|floatformat:2 }} </td>
+                            <td style='text-align:center;'>
+                                <a href="javascript:void(0);" 
+                                class="status-pill status-clickable
+                                 {% if proposta.status.ds_status == 'Reprovada' %}status-reprovada
+                                 {% elif proposta.status.ds_status == 'Aprovada' %}status-aprovada
+                                 {% elif proposta.status.ds_status == 'Paga' %}status-paga
+                                 {% endif %}"
+                                data-proposta-id="{{ proposta.id }}"
+                                data-status="{{ proposta.status.ds_status }}"
+                                data-dt-pagamento="{{ proposta.dt_pagamento|date:'Y-m-d' }}">
+                                {{ proposta.status.ds_status|title }}
+                             </a>
+                             
+                            </td>
+                            <td>{{ proposta.dt_proposta|date:"d/m/Y" }}</td>
+                            <td>{{ proposta.dt_pagamento|date:"d/m/Y"|default_if_none:"" }}</td>
+                            <td>{{ proposta.receita}}</td>
+                            <td>
+                                <a href="{% url 'propostas:detalhe_proposta' proposta.id %}" class="btn btn-sm" title="Ver detalhes">
+                                    <i class="ri-eye-line"></i>
+                                </a>
+                                <a href="{% url 'propostas:editar_proposta' proposta.id %}" class="btn btn-sm" title="Editar">
+                                    <i class="ri-pencil-line"></i>
+                                </a>
+                            </td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    
+                </table>
+            </div>
+              
+
+        </div>
+    </div>
+
+      <a href="{% url 'propostas:criar_proposta' %}" id="btn" style="font-size:15px;">
+        <div class="btn-positive" >
+            <p>Nova Proposta</p>
+        </div>
+      </a>
+
+    <!-- Modal p/ Alterar Status -->
+<div class="modal fade" id="modalAlterarStatus" tabindex="-1" aria-labelledby="alterarStatusLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm"> 
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="alterarStatusLabel">Alterar Status</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          
+          <form id="formAlterarStatus">
+            <!-- Campo oculto com ID da proposta -->
+            <input type="hidden" name="proposta_id" id="proposta_id" value="">
+            
+            <!-- Select p/ novo status -->
+            <div class="mb-3">
+              <label for="novo_status" class="form-label">Novo Status</label>
+              <select class="form-select" id="novo_status" name="novo_status">
+                <option value="">Selecione...</option>
+                {% for st in status_list %}
+                  <option value="{{ st.ds_status }}">{{ st.ds_status|title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+  
+            <!-- Campo de data (somente aparece se status == 'Paga') -->
+            <div class="mb-3" id="div_dt_pagamento" style="display:none;">
+              <label for="dt_pagamento" class="form-label">Data de Pagamento</label>
+              <input type="date" class="form-control" id="dt_pagamento" name="dt_pagamento">
+            </div>
+          </form>
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          <button type="button" class="btn btn-primary" id="btnSalvarStatus">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      /* ==============================
+       * Alteração de Status via Modal
+       * ============================== */
+      const modalAlterarStatus = new bootstrap.Modal(document.getElementById('modalAlterarStatus'));
+      const form = document.getElementById('formAlterarStatus');
+      const selectStatus = document.getElementById('novo_status');
+      const divDtPagamento = document.getElementById('div_dt_pagamento');
+      const inputDtPagamento = document.getElementById('dt_pagamento');
+      const btnSalvar = document.getElementById('btnSalvarStatus');
+      
+      // Ao clicar no status da tabela
+      document.querySelectorAll('.status-clickable').forEach(function(elem){
+        elem.addEventListener('click', function(){
+          const propostaId = this.dataset.propostaId;
+          const statusAtual = this.dataset.status; // ex: "Aprovada"
+          const dtPagamento = this.dataset.dtPagamento; // ex: "2025-01-29" ou vazio
+    
+          // Preenche campos no modal
+          form.querySelector('#proposta_id').value = propostaId;
+          selectStatus.value = statusAtual; 
+    
+          // Se status atual for 'Paga', exibir data; senão, esconder
+          if(statusAtual.toLowerCase() === 'paga'){
+            divDtPagamento.style.display = 'block';
+            inputDtPagamento.value = dtPagamento || ''; 
+          } else {
+            divDtPagamento.style.display = 'none';
+            inputDtPagamento.value = '';
+          }
+    
+          modalAlterarStatus.show();
+        });
+      });
+    
+      // Ao mudar o select de status, se for "Paga", exibe/oculta o campo data
+      selectStatus.addEventListener('change', function(){
+        if(this.value.toLowerCase() === 'paga'){
+          divDtPagamento.style.display = 'block';
+        } else {
+          divDtPagamento.style.display = 'none';
+          inputDtPagamento.value = '';
+        }
+      });
+    
+      // Botão "Salvar" do modal
+      btnSalvar.addEventListener('click', function(){
+        const propostaId = form.querySelector('#proposta_id').value;
+        const novoStatus = selectStatus.value;
+        const dtPagamentoValue = inputDtPagamento.value;
+    
+        if(!novoStatus){
+          alert("Selecione um status!");
+          return;
+        }
+    
+        // Faz requisição AJAX (POST) p/ atualizar_status
+        fetch(`/propostas/atualizar_status/${propostaId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'), // Precisamos do CSRF Token
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            'novo_status': novoStatus,
+            'dt_pagamento': dtPagamentoValue
+          })
+        })
+        .then(response => {
+          if(!response.ok){
+            throw new Error('Erro ao atualizar status');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if(data.erro){
+            alert(data.erro);
+          } else {
+            // Sucesso: atualiza a célula do status na tabela e fecha modal
+            modalAlterarStatus.hide();
+    
+            const linkStatus = document.querySelector(`.status-clickable[data-proposta-id="${propostaId}"]`);
+            if(linkStatus){
+              linkStatus.textContent = data.novo_status;
+              linkStatus.dataset.status = data.novo_status;
+    
+              // Ajusta classes de cor
+              linkStatus.classList.remove('status-reprovada','status-aprovada','status-paga');
+              if(data.novo_status.toLowerCase() === 'paga'){
+                linkStatus.classList.add('status-paga');
+              } else if(data.novo_status.toLowerCase() === 'aprovada'){
+                linkStatus.classList.add('status-aprovada');
+              } else if(data.novo_status.toLowerCase() === 'reprovada'){
+                linkStatus.classList.add('status-reprovada');
+              }
+              // Se houver outros status, gerencie aqui
+            }
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          alert("Houve um erro ao atualizar o status.");
+        });
+      });
+    
+    
+      /* ============================
+       * Ordenação de Colunas (Front)
+       * ============================ */
+      const table = document.getElementById("propostasTable");
+      if (table) {
+        const headers = table.querySelectorAll("thead th.sortable");
+    
+        // Para cada <th> que tenha "sortable", adicionar evento de clique
+        headers.forEach((th, index) => {
+          th.addEventListener("click", function () {
+            // Tipo de ordenação: string, number ou date
+            const sortType = th.getAttribute("data-sort-type") || "string";
+    
+            // Alternar entre ASC e DESC
+            let currentOrder = th.getAttribute("data-sort-order") || "none";
+            let newOrder = (currentOrder === "asc") ? "desc" : "asc";
+            th.setAttribute("data-sort-order", newOrder);
+    
+            // Remove as classes asc/desc de todos, e aplica no atual
+            headers.forEach(h => h.classList.remove("asc", "desc"));
+            th.classList.add(newOrder);
+    
+            // Executa ordenação
+            sortTable(table, index, newOrder === "desc", sortType);
+          });
+        });
+      }
+    
+      function sortTable(table, colIndex, reverse, sortType) {
+        const tbody = table.querySelector("tbody");
+        let rowsArray = Array.from(tbody.querySelectorAll("tr"));
+    
+        // Extrai valor do item da coluna
+        const getCellValue = (tr, idx) => tr.children[idx].innerText.trim();
+    
+        let comparator;
+        if (sortType === "number") {
+          comparator = (a, b) => {
+            // Ajuste se seus números usam ponto e vírgula no formato PT-BR
+            let A = parseFloat(getCellValue(a, colIndex).replace(/\./g,'').replace(',','.')) || 0;
+            let B = parseFloat(getCellValue(b, colIndex).replace(/\./g,'').replace(',','.')) || 0;
+            return A - B;
+          };
+        } else if (sortType === "date") {
+          comparator = (a, b) => {
+            let dateA = parseDate(getCellValue(a, colIndex));
+            let dateB = parseDate(getCellValue(b, colIndex));
+            return dateA - dateB; 
+          };
+        } else {
+          // string (padrão)
+          comparator = (a, b) => {
+            let A = getCellValue(a, colIndex).toLowerCase();
+            let B = getCellValue(b, colIndex).toLowerCase();
+            return A.localeCompare(B);
+          };
+        }
+    
+        rowsArray.sort(comparator);
+        if (reverse) {
+          rowsArray.reverse();
+        }
+    
+        // Recoloca as linhas em ordem
+        rowsArray.forEach(tr => tbody.appendChild(tr));
+      }
+    
+      // Converter "dd/mm/yyyy" ou "yyyy-mm-dd" em timestamp numérico
+      function parseDate(str) {
+        if (!str) return 0; 
+        // Se vier dd/mm/yyyy
+        let parts = str.split('/');
+        if (parts.length === 3) {
+          let [d, m, y] = parts;
+          return new Date(`${y}-${m}-${d}`).getTime() || 0;
+        }
+        // Senão, tenta yyyy-mm-dd
+        parts = str.split('-');
+        if (parts.length === 3) {
+          let [y, m, d] = parts;
+          return new Date(`${y}-${m}-${d}`).getTime() || 0;
+        }
+        return 0;
+      }
+    });
+    
+    
+    /* ======================
+     * Função para pegar CSRF
+     * ====================== */
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for(let i=0; i < cookies.length; i++){
+          const cookie = cookies[i].trim();
+          if(cookie.substring(0, name.length + 1) === (name + '=')){
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    </script>
+    
+            
+
+
+
+{% endblock %}

@@ -1,10 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<div class="">
+    <h5>{% if user_form.instance.pk %}Editar Usuário{% else %}Novo Usuário{% endif %}</h5>
+</div>
+<hr>
+
+<div class="container mt-6">
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Dados do Usuário -->
+         <div class="">
+            <h6>Dados do Usuário</h6>
+        </div>
+        <!-- Dados do Operador -->
+        <div class="row">
+            <div class="col-md-4">
+                {{ operador_form.nm_operador.label_tag }}
+                {{ operador_form.nm_operador }}
+            </div>
+            <div class="col-md-2">
+                {{ operador_form.cpf_operador.label_tag }}
+                {{ operador_form.cpf_operador }}
+            </div>
+            <div class="col-md-2">
+                {{ operador_form.dt_nascimento.label_tag }}
+                {{ operador_form.dt_nascimento }}
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-2">
+                {{ operador_form.cel_operador.label_tag }}
+                {{ operador_form.cel_operador }}
+            </div>
+            <div class="col-md-4">
+                {{ operador_form.email_operador.label_tag }}
+                {{ operador_form.email_operador }}
+            </div>
+        </div>
+        <div class="row">
+
+        </div>
+
+        <!-- Dados de acesso e perfil -->
+        <div class="">
+            <h6>Dados de Acesso</h6>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                {{ user_form.username.label_tag }}
+                {{ user_form.username }}
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                {{ user_form.password.label_tag }}
+                {{ user_form.password }}
+            </div>
+            <div class="col-md-2">
+                {{ user_form.password_confirmation.label_tag }}
+                {{ user_form.password_confirmation }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                {{ operador_form.perfil.label_tag }}
+                {{ operador_form.perfil }}
+            </div>
+            <div class="col-md-2">
+                {{ operador_form.filial.label_tag }}
+                {{ operador_form.filial }}
+            </div>
+            <div class="col-md-3">
+                {{ user_form.is_active.label_tag }}
+                {{ user_form.is_active }}
+            </div>
+        </div>
+
+
+        <!-- Botões -->
+        <div id="bottom-buttons">
+            <button type="button" class="btn-voltar" onclick="window.location.href='{% url 'usuarios:lista_usuarios' %}'">Cancelar</button>
+            <button type="submit" class="btn-salvar">Salvar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

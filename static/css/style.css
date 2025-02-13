@@ -1,195 +1,650 @@
-/* Tipografia e Cores Gerais */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #dbe0e6; 
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  width: 100%;
-  color: #333; /* Texto neutro */
-  margin: 0;
-  padding: 0;
-  font-size: 12px; /* Define o tamanho base da fonte */
-  line-height: 1; /* Melhora o espaçamento entre linhas */
-}
-
-/* Conteúdo Principal */
-#main-content {
-  margin-left: 220px; /* Espaço para o sidebar */
-  padding: 20px;
-  width: calc(100% - 220px); /* Ocupa o restante da largura */
-  min-height: 100vh; /* Altura total da tela */
-  overflow: hidden; /* Remove qualquer barra desnecessária */
-  box-sizing: border-box;
-}
-
-.search-bar .form-control {
-  border-radius: 25px;
-  font-size: 0.9rem; /* Reduz o tamanho do texto no campo de busca */
-}
-
-.search-bar .btn {
-  font-size: 0.9rem; /* Reduz o texto no botão de busca */
-  border-radius: 25px;
-}
-
-/* Tabelas */
-table, th, td {
-  border-collapse: collapse;
-  padding: .5rem;
-  border: none;
-  
-}
-
-main.table {
-  width: 82vw;
-  height: auto;
-  background-color: rgba(255, 255, 255, 0.097);
-  backdrop-filter: blur(7px);
-  box-shadow: 0 .4rem .8rem #0005;
-  border-radius: .8rem;
-  overflow: hidden;
-  padding: 0;
-}
-
-.table__body {
-  width: 99%;
-  max-height: calc(89% - .8rem);
-  background-color: #ffffff;
-  margin: .8rem auto;
-  border-radius: .6rem;
-  overflow: auto;
-  margin-top: 5px;
-  margin-bottom: 5px;
-
-}
-
-.table__body::-webkit-scrollbar {
-  width: .5rem;
-  height: .5rem;
-}
-
-.table__body::-webkit-scrollbar-thumb {
-  border-radius: .5rem;
-  background-color: #0004;
-  visibility: visible;
-}
-
-.table {
-  width: 100%;
-  margin-top: 0;
-
-}
-
-.table thead th {
-  background-color: #e1dee6fe;
-  color: rgb(0, 0, 0);
-  border-bottom: none;
-  padding: 1rem 1rem;
-  
-
-}
-
-tbody tr:nth-child(even) {
-  background-color: #0000000f;
-}
-
-tbody tr:hover {
-  background-color: #fff6;
-}
-
-
-/* Estilos de Formulários */
-.form-floating .form-select label{
-  font-size: 0.75rem;
-  color: #575353;
-  background-color: transparent;
-}
-
-.form-floating label{
-  font-size: 0.75rem;
-  color: #575353;
-  background-color: transparent;
-}
-
-.form-floating .form-control {
-  border-radius: 0px;
-  font-size: 0.8rem;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: #164773 2px thick;
-  outline: none;
-  background-color: transparent;
-  color: #575353;
-
-}
-
-.form-floating .form-select {
-  border-radius: 0px;
-  font-size: 0.8rem;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: #164773 2px thick;
-  outline: none;
-  background-color: transparent;
-  color: #575353;
-
-}
-
-/* Estilo para os campos ao focar */
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="email"]:focus,
-input[type="date"]:focus,
-input[type="tel"]:focus,
-textarea:focus,
-select:focus {
-    border-bottom: 2px solid #164773 !important; /* Borda mais espessa ao focar */
-    outline: none !important; /* Remove o contorno azul padrão */
-    box-shadow: none !important; /* Remove qualquer sombra residual */
-    
-}
-
-/* Ajustes Responsivos */
-@media (max-width: 768px) {
-  #sidebar {
-    width: 200px; /* Reduz a largura do sidebar */
+/* =============================================
+   CSS Variables - Tema Único Moderno e Suave
+   ============================================= */
+   :root {
+    --background-color: #F4F6F8;      /* Fundo suave, cinza-azulado claro */
+    --text-color: #2C3E50;            /* Texto em azul-acinzentado escuro */
+    --navbar-bg: #34495E;             /* Navbar em azul-acinzentado profundo */
+    --link-color: #ffffff;            /* Links em branco para bom contraste */
+    --offcanvas-bg: #2C3E50;          /* Fundo do offcanvas, tom similar à navbar */
+    --titulo-bg: #E0E7EF;             /* Fundo suave para cabeçalhos de seção */
+    --titulo-text: #2C3E50;
+    --nav-hover-bg: #2C3E50;          /* Hover em navegação */
+    --form-label-color: #2C3E50;      
+    --input-border-color: #c4ced9;    
+    --dropdown-item-hover-bg: #2C3E50;
+    --dropdown-item-hover-text: #ffffff;
+    --table-header-bg: #34495E;
+    --table-header-text: #ffffff;
+    --card-header-bg: #E8EEF1;        /* Cabeçalho dos cards com tom suave */
+    --card-header-text: #2C3E50;
+    --sort-icon-color: #7F8C8D;
+    --sort-active-color: #2C3E50;
+    --hori-selector-bg: #5DADE2;      /* Acento em azul vibrante */
+    --btn-positive-bg: #455167;       /* Botão de ação primário */
+    --btn-positive-hover-bg: #ff4400;
   }
+  
+  /* =============================================
+     Global Styles
+     ============================================= */
+  body {
+    margin: 0;
+    background: linear-gradient(rgb(233, 228, 238), rgb(221, 216, 227));
+    color: var(--text-color);
+    min-height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+    padding: 20px;
+    font-size: small;
+  }
+  
+  a {
+    text-decoration: none;
+    color: var(--link-color);
+  }
+  
+  /* =============================================
+     Navbar & Navigation
+     ============================================= */
+  .navbar-mainbg,
+  .navbar {
+    background-color: var(--navbar-bg) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar .navbar-brand,
+  .navbar-logo {
+    padding: 0.3rem 1rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo-navbar {
+    width: 100px;
+  }
+  
+  .navbar-toggler {
+    border: none;
+    outline: none !important;
+  }
+  
+  .navbar-toggler:focus,
+  .navbar-toggler:active {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  .navbar-toggler .fas.fa-bars {
+    color: var(--link-color);
+    font-size: 1.2rem;
+  }
+  
+  .nav-link {
+    color: var(--link-color) !important;
+    font-weight: 500;
+  }
+  
+  .nav-link:hover,
+  .nav-link:focus {
+    text-decoration: none !important;
+  }
+  
+  .navbar-nav .nav-item:not(:last-child) {
+    margin-right: 3rem;
+  }
+  
+  .navbar-nav .nav-item .nav-link i {
+    margin-left: 15px;
+    font-size: small;
+  }
+  
+  .navbar-nav .nav-item:hover .nav-link,
+  .navbar-nav .nav-item.active .nav-link {
+    background-color: var(--nav-hover-bg);
+  }
+  
+  /* =============================================
+     Offcanvas Styles
+     ============================================= */
+  .offcanvas {
+    margin-left: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    background-color: var(--offcanvas-bg) !important;
+    padding: 0;
+    width: 300px !important;
+  }
+  
+  .offcanvas-body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+  
+  .offcanvas-body .navbar-nav {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0px !important;
+    display: block;
+  }
+  
+  .offcanvas-body .nav-item,
+  .offcanvas-body .nav-link {
+    width: 100%;
+    padding: 2px;
+    color: var(--link-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: small;
+    display: block;
+    outline: none !important;
+    align-items: center;
+    margin: 0;
+  }
+  
+  .offcanvas-title {
+    color: var(--link-color);
+    font-weight: bold;
+    padding: 10px 15px;
+    font-size: 1.2rem;
+  }
+  .nav-item:hover, .nav-link:hover {
+    background-color: rgb(101, 177, 232) !important;
+    outline: none !important;
+  }  
 
+  .offcanvas-body .nav-link i {
+    margin-right: 5px;
+  }
+  
+  /* =============================================
+     Dropdown Menu
+     ============================================= */
+  .dropdown-menu {
+    background-color: var(--offcanvas-bg);
+    border: none;
+    margin-top: 0.5rem;
+  }
+  
+  .dropdown-menu .dropdown-item {
+    color: var(--link-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .dropdown-menu .dropdown-item i {
+    margin-right: 5px;
+  }
+  
+  .dropdown-menu .dropdown-item:hover {
+    background-color: var(--dropdown-item-hover-bg);
+    color: var(--dropdown-item-hover-text);
+  }
+  
+  /* =============================================
+     Responsive Adjustments
+     ============================================= */
+  @media (max-width: 991px) {
+    .navbar-nav .nav-item {
+      margin-left: 0 !important;
+    }
+    .navbar-nav .nav-item .nav-link {
+      margin-right: 0 !important;
+      padding: 10px 15px;
+    }
+  }
+  
+  /* =============================================
+     Seções & Elementos Decorativos
+     ============================================= */
+  .hori-selector {
+    position: absolute;
+    height: 2px;
+    width: 0;
+    left: 0;
+    top: 100%;
+    transition: all 0.2s ease;
+    background-color: var(--hori-selector-bg);
+    border-radius: 4px;
+  }
+  
+
+  
   #main-content {
-    margin-left: 220px; /* Ajusta o recuo do conteúdo principal */
+    margin-top: 100px;
+    width: 100%;
+  }
+  
+  /* =============================================
+     Botões & Elementos Interativos
+     ============================================= */
+  .logout-btn {
+    color: var(--link-color);
+    font-size: 1.4rem;
+    margin-right: 1.5rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .logout-btn:hover {
+    color: var(--nav-hover-bg);
+    transform: scale(1.1);
+  }
+  
+  .btn-toggle {
+    color: var(--link-color) !important;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    outline: none !important;
+  }
+  
+  .btn-positive,
+  .btn-positive-half {
+    background-color: var(--btn-positive-bg);
+    height: 60px;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle !important;
+    font-weight: bolder;
+    transition: background 0.3s ease;
+    color: #fff;
+  }
+  
+  .btn-positive {
+    margin: 0 auto;
+    align-items: center !important;  /* Alinhamento vertical */    
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    vertical-align: middle !important;
+    width: 100%;
+    height: 60px;  /* Garante que ocupe a altura total */
+    padding-top: 20px !important;
+
+  }
+  
+  .btn-positive:hover {
+    background-color: var(--btn-positive-hover-bg);
+  }
+  
+  .btn-positive-half {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 50%;
+  }
+  
+  .btn-positive-half:hover {
+    background-color: var(--btn-positive-hover-bg);
+  }
+  
+  .btn-negative-half {
+    background-color: rgb(102, 104, 105);
+    height: 50px;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    text-align: center;
+    font-weight: bolder;
+    transition: background 0.3s ease;
+    z-index: 1000;
+    color: #fff;
+  }
+  
+  .btn-negative-half:hover {
+    background-color: rgb(79, 117, 137);
+  }
+  
+  /* =============================================
+     Indicadores de Status & Badges
+     ============================================= */
+  .status-pill {
+    display: inline-block;
+    padding: 5px;
+    border-radius: 50px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: center;
+    min-width: 80px;
+    text-transform: uppercase;
+  }
+  
+  .status-aprovada {
+    background-color: #176ca0 !important;
+  }
+  
+  .status-reprovada {
+    background-color: rgb(255, 0, 0) !important;
+  }
+  
+  .status-paga {
+    background-color: rgb(0, 128, 0) !important;
+  }
+  
+  .badge {
+    font-size: 0.75rem;
+  }
+  
+/* =============================================
+   Estilos de Formulários
+   ============================================= */
+   label {
+    font-weight: 600;
+    color: var(--form-label-color) !important;
+  }
+  
+  /* Rótulos no Form Floating */
+  .form-floating > label {
+    background-color: transparent !important;
+    padding: 0.25rem 0.5rem;
+    font-size: 1rem;
+    color: var(--form-label-color) !important;
+  }
+  
+  .form-floating .form-select label {
+    font-size: 0.75rem;
+    color: var(--text-color);
+    background-color: transparent;
+  }
+  
+  /* Estilos para inputs e selects dentro de form-floating */
+  .form-floating .form-control,
+  .form-floating .form-select {
+    border: none; /* Remove a borda padrão */
+    border-bottom: 2px solid var(--input-border-color);
+    border-radius: 0;
+    font-size: 0.9rem;
+    position: relative; /* Necessário para o posicionamento do pseudo-elemento */
+    background-color: transparent;
+    color: var(--text-color);
+    padding: 0.25rem 0.5rem;
+    transition: all 0.3s ease-in-out;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Efeito de foco adicional (opcional) */
+  .form-floating .form-control:focus,
+  .form-floating .form-select:focus {
+    box-shadow: 0 0 6px var(--hori-selector-bg);
+    border-bottom: 2px solid black;
+
+  }
+  
+  /* Garante que o label dentro de .form-floating permaneça transparente */
+  .form-floating > label,
+  .form-floating > .form-control:not(:placeholder-shown) ~ label,
+  .form-floating > .form-control:focus ~ label {
+    background-color: transparent !important;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .form-floating > label::after {
+    background-color: transparent !important;
+  }
+  
+  
+  /*=============================================
+  Social & Action Buttons
+  ============================================= */
+  .wrapper .button {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  margin: 15px 5px;
+  overflow: hidden;
+  background: var(--background-color);
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.2);
+  transition: all 0.3s ease-out;
   }
 
-  .search-bar .form-control {
-    font-size: 0.8rem; /* Texto menor em telas menores */
+  .wrapper .button:hover {
+  width: 150px;
   }
 
-  .search-bar .btn {
-    font-size: 0.8rem; /* Texto menor no botão em telas menores */
-  }
-}
-
-.card-formulario {
-  margin-bottom: 20px;
-  padding: 20px;
-  border-radius: 15px;
-  border: none;
-  /*background-color: white;*/
-  background: white;
-  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
-}
-
-/* Ajuste do container do dashboard */
-#dashboard-container {
-  width: calc(100% - 40px); /* Considera padding/margens do conteúdo */
-  height: calc(100vh - 100px); /* Altura total menos a altura do cabeçalho */
-  margin: 0 auto; /* Centraliza horizontalmente */
-  padding: 20px;
-  background-color: #f5f7fa; /* Fundo claro */
-  overflow-y: auto; /* Adiciona barra de rolagem se necessário */
+  .wrapper .button .icon {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  border-radius: 50px;
   box-sizing: border-box;
-}
+  line-height: 40px;
+  text-align: center;
+  transition: all 0.3s ease-out;
+  }
+
+  .wrapper .button:nth-child(1):hover .icon {
+  background: var(--nav-hover-bg);
+  color: #ffffff;
+  }
+
+  .wrapper .button:nth-child(2):hover .icon {
+  background: #ff0000;
+  color: #ffffff;
+  }
+
+  .wrapper .button .icon i {
+  font-size: 20px;
+  line-height: 40px;
+  }
+
+  .wrapper .button span {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 40px;
+  margin-left: 10px;
+  }
+
+  .button .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  text-align: center;
+  transition: all 0.3s ease-out;
+  }
+
+  .button button.icon {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  }
+
+  .button {
+  text-decoration: none;
+  color: inherit !important;
+  }
+
+  
+  /* =============================================
+     Estilos para Tabelas
+     ============================================= */
+  table {
+    width: 100%;
+    padding: 5px !important;
+    border-collapse: collapse;
+    font-size: smaller;
+    color: var(--text-color) !important;
+    background-color: var(--background-color) !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .tableFixHead {
+    overflow-y: auto;
+    overflow-x: auto;
+    min-height: auto;
+    max-height: 370px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    margin-bottom: 50px;
+  }
+  
+  .tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text) !important;
+  }
+  
+  /* =============================================
+     Portal & Itens Diversos
+     ============================================= */
+  .bg-azul-portal {
+    background-color: var(--offcanvas-bg) !important;
+  }
+  
+  .portal-logo {
+    width: 70px;
+    height: auto;
+  }
+  
+  .portal-titulo-nome {
+    font-size: 1rem;
+    color: var(--link-color);
+  }
+  
+  .portal-subtitulo-nome {
+    font-size: 0.8rem;
+    color: var(--link-color);
+    opacity: 0.9;
+  }
+  
+  .ms-negocios-titulo {
+    color: var(--link-color);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .icon-menu {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* =============================================
+     Cabeçalhos de Tabela Ordenáveis
+     ============================================= */
+  th.sortable {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    padding-right: 20px;
+  }
+  
+  th.sortable::after {
+    content: "\f0dc"; /* Font Awesome: fa-sort */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--sort-icon-color);
+  }
+  
+  th.sortable.asc::after {
+    content: "\f0de"; /* Font Awesome: fa-sort-up */
+    color: var(--sort-active-color);
+  }
+  
+  th.sortable.desc::after {
+    content: "\f0dd"; /* Font Awesome: fa-sort-down */
+    color: var(--sort-active-color);
+  }
+  
+  /* =============================================
+     Estilos dos Cards
+     ============================================= */
+  .card-formulario {
+    margin-bottom: 20px;
+    border-radius: 0 !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card-formulario .card-body {
+    padding: 5px;
+    margin: 0;
+  }
+  
+  .card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  .card .card-header {
+    background-color: var(--card-header-bg) !important;
+    color: var(--card-header-text) !important;
+  }
+  
+  .card .card-header i,
+  .card .card-header h5 {
+    color: var(--card-header-text) !important;
+  }
+  
+  /* =============================================
+     Estilos da Tabela de Propostas
+     ============================================= */
+  #propostasTable tbody tr {
+    transition: color 0.3s ease;
+  }
+  
+  #propostasTable tbody tr:hover {
+    color: var(--text-color);
+  }
+  
+  /* =============================================
+     Estilos Exclusivos para Formulários Modernos
+     ============================================= */
+  .titulo-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+  }
+  
+  .titulo-icone {
+    font-size: 1.8rem;
+    color: var(--navbar-bg);
+    margin-right: 10px;
+  }
+  
+  .titulo-texto {
+    color: var(--titulo-text);
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+  
+  .formulario-card {
+    border-radius: 0;
+    border: none;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1) !important;
+    overflow: hidden;
+  }
+  
+  .formulario-card .card-header {
+    background-color: var(--navbar-bg);
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+  }
+  
+  .formulario-card .card-header i {
+    font-size: 1rem;
+  }
+  
+  /* Garante que os labels dentro do form-floating sejam transparentes */
+  .form-floating > label,
+  .form-floating .form-control:not(:placeholder-shown) ~ label,
+  .form-floating .form-control:focus ~ label {
+    background-color: transparent !important;
+    padding: 0.25rem 0.5rem;
+  }
+  
