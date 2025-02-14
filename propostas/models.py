@@ -11,9 +11,9 @@ from django.utils import timezone
 
 class Proposta(models.Model):
     nr_proposta = models.CharField("Número da Proposta", max_length=15, unique=True)
-    vl_financiado = models.FloatField("Valor Financiado")
+    vl_financiado = models.DecimalField("Valor Financiado", max_digits=12, decimal_places=2)
     prazo = models.IntegerField("Prazo (meses)")
-    vl_parcela = models.FloatField("Valor da Parcela")
+    vl_parcela = models.DecimalField("Valor da Parcela", max_digits=12, decimal_places=2)
     receita = models.DecimalField("Receita", max_digits=12, decimal_places=2, default=0.00)
     loja = models.ForeignKey(
         "lojas.Loja", 
