@@ -4,41 +4,46 @@ from .forms import ClienteForm, EnderecoClienteForm, ProfissaoClienteForm, Conta
 from rest_framework.viewsets import ModelViewSet
 from .serializers import ClienteSerializer
 
-
 # ---------------------- VIEWSET PARA API ---------------------- #
 class ClienteViewSet(ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
 
 
-# ---------------------- CRIAR CLIENTE ---------------------- #
-def cliente_create(request):
+# ---------------------- CRIAR OU ATUALIZAR CLIENTE ---------------------- #
+def cliente_create_or_update(request):
     if request.method == "POST":
-        cliente_form = ClienteForm(request.POST)
-        endereco_form = EnderecoClienteForm(request.POST)
-        profissao_form = ProfissaoClienteForm(request.POST)
-        contato_form = ContatoClienteForm(request.POST)
+        cpf = request.POST.get("nr_cpf", "").replace(".", "").replace("-", "")  # Remove formatação do CPF
+        loja_id = request.POST.get("loja")  # Captura a loja do formulário
+        operador_id = request.POST.get("operador")  # Captura o operador do formulário
+        
+        cliente = Cliente.objects.filter(nr_cpf=cpf).first()  # Busca o cliente
+
+        # Busca registros existentes com base no unique_together
+        endereco = EnderecoCliente.objects.filter(cliente=cliente, loja_id=loja_id, operador_id=operador_id).first()
+        profissao = ProfissaoCliente.objects.filter(cliente=cliente, loja_id=loja_id, operador_id=operador_id).first()
+        contato = ContatoCliente.objects.filter(cliente=cliente, loja_id=loja_id, operador_id=operador_id).first()
+
+        # Se já existe um cliente na loja e operador, atualiza. Senão, cria um novo.
+        cliente_form = ClienteForm(request.POST, instance=cliente)
+        endereco_form = EnderecoClienteForm(request.POST, instance=endereco if endereco else None)
+        profissao_form = ProfissaoClienteForm(request.POST, instance=profissao if profissao else None)
+        contato_form = ContatoClienteForm(request.POST, instance=contato if contato else None)
 
         if cliente_form.is_valid() and endereco_form.is_valid() and profissao_form.is_valid() and contato_form.is_valid():
-            # Salva o cliente
-            cliente = cliente_form.save()
+            cliente = cliente_form.save()  # Salva ou atualiza cliente
 
-            # Salva o endereço vinculado ao cliente
-            endereco = endereco_form.save(commit=False)
-            endereco.cliente = cliente
-            endereco.save()
+            # Atualiza ou cria um novo registro de endereço, profissão e contato
+            endereco_form.instance.cliente = cliente
+            endereco_form.save()
 
-            # Salva a profissão vinculada ao cliente
-            profissao = profissao_form.save(commit=False)
-            profissao.cliente = cliente
-            profissao.save()
+            profissao_form.instance.cliente = cliente
+            profissao_form.save()
 
-            # Salva o contato vinculado ao cliente
-            contato = contato_form.save(commit=False)
-            contato.cliente = cliente
-            contato.save()
+            contato_form.instance.cliente = cliente
+            contato_form.save()
 
-            return redirect('clientes:cliente_list')
+            return redirect("clientes:cliente_list")  # Redireciona após sucesso
 
     else:
         cliente_form = ClienteForm()
@@ -46,11 +51,11 @@ def cliente_create(request):
         profissao_form = ProfissaoClienteForm()
         contato_form = ContatoClienteForm()
 
-    return render(request, 'clientes/cliente_form.html', {
-        'cliente_form': cliente_form,
-        'endereco_form': endereco_form,
-        'profissao_form': profissao_form,
-        'contato_form': contato_form
+    return render(request, "clientes/cliente_form.html", {
+        "cliente_form": cliente_form,
+        "endereco_form": endereco_form,
+        "profissao_form": profissao_form,
+        "contato_form": contato_form,
     })
 
 
@@ -78,15 +83,20 @@ def cliente_detail(request, pk):
 # ---------------------- ATUALIZAR CLIENTE ---------------------- #
 def cliente_update(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
-    endereco = get_object_or_404(EnderecoCliente, cliente=cliente)
-    profissao = get_object_or_404(ProfissaoCliente, cliente=cliente)
-    contato = get_object_or_404(ContatoCliente, cliente=cliente)
+
+    # Pega a loja e operador enviados no formulário para checar duplicatas
+    loja_id = request.POST.get("loja")
+    operador_id = request.POST.get("operador")
+
+    endereco = EnderecoCliente.objects.filter(cliente=cliente, loja_id=loja_id, operador_id=operador_id).first()
+    profissao = ProfissaoCliente.objects.filter(cliente=cliente, loja_id=loja_id, operador_id=operador_id).first()
+    contato = ContatoCliente.objects.filter(cliente=cliente, loja_id=loja_id, operador_id=operador_id).first()
 
     if request.method == "POST":
         cliente_form = ClienteForm(request.POST, instance=cliente)
-        endereco_form = EnderecoClienteForm(request.POST, instance=endereco)
-        profissao_form = ProfissaoClienteForm(request.POST, instance=profissao)
-        contato_form = ContatoClienteForm(request.POST, instance=contato)
+        endereco_form = EnderecoClienteForm(request.POST, instance=endereco if endereco else None)
+        profissao_form = ProfissaoClienteForm(request.POST, instance=profissao if profissao else None)
+        contato_form = ContatoClienteForm(request.POST, instance=contato if contato else None)
 
         if cliente_form.is_valid() and endereco_form.is_valid() and profissao_form.is_valid() and contato_form.is_valid():
             cliente_form.save()
@@ -97,9 +107,9 @@ def cliente_update(request, pk):
 
     else:
         cliente_form = ClienteForm(instance=cliente)
-        endereco_form = EnderecoClienteForm(instance=endereco)
-        profissao_form = ProfissaoClienteForm(instance=profissao)
-        contato_form = ContatoClienteForm(instance=contato)
+        endereco_form = EnderecoClienteForm(instance=endereco if endereco else None)
+        profissao_form = ProfissaoClienteForm(instance=profissao if profissao else None)
+        contato_form = ContatoClienteForm(instance=contato if contato else None)
 
     return render(request, 'clientes/cliente_form.html', {
         'cliente_form': cliente_form,

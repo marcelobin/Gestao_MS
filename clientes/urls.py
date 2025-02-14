@@ -9,10 +9,9 @@ router = DefaultRouter()
 router.register(r'clientes', ClienteViewSet)
 
 urlpatterns = [
-    path('novo/', views.cliente_create, name='cliente_create'),  # Rota para criar um cliente
+    path('novo/', views.cliente_create_or_update, name='cliente_create'),  # Corrigido para cliente_create_or_update
     path('<int:pk>/editar/', views.cliente_update, name='cliente_update'),  # Rota para editar um cliente
     path('', views.cliente_list, name='cliente_list'),  # Rota para listar clientes
     path('<int:pk>/', views.cliente_detail, name='cliente_detail'),  # Rota para detalhes de um cliente
-    path('api/', include(router.urls)),
-    
+    path('api/', include(router.urls)),  # Rota da API Rest
 ]

@@ -30,12 +30,13 @@
      ============================================= */
   body {
     margin: 0;
+    top:0 !important;
     background: linear-gradient(rgb(233, 228, 238), rgb(221, 216, 227));
     color: var(--text-color);
     min-height: 100vh;
     font-family: 'Roboto', sans-serif;
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     font-size: small;
   }
   
@@ -493,6 +494,17 @@
     background-color: var(--table-header-bg);
     color: var(--table-header-text) !important;
   }
+
+  .tableFixHead tbody tr {
+    vertical-align: middle;
+    padding-top: 1px;
+  }  
+
+  .tableFixHead tbody td {
+    vertical-align: middle;
+    padding-top: 1px;
+    padding-bottom: 1px;
+  }   
   
   /* =============================================
      Portal & Itens Diversos
