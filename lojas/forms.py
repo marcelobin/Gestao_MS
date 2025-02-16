@@ -19,7 +19,7 @@ class LojaForm(forms.ModelForm):
         fields = [
             'nr_cnpj', 'razao_social', 'nm_fantasia', 'dt_constituicao', 'cep', 'endereco',
             'nro', 'complemento', 'bairro', 'cidade', 'uf', 'fone_fixo', 'celular', 'email',
-            'operador', 'filial'
+            'operador', 'filial', 'status'
         ]
         widgets = {
             'dt_constituicao': forms.DateInput(attrs={'type': 'text', 'placeholder': 'dd/mm/aaaa'}),
@@ -90,7 +90,7 @@ SocioLojaFormSet = inlineformset_factory(
     Socio,
     form=SocioForm,
     fields=['nome_socio', 'cpf_socio', 'dt_nascimento_socio', 'celular', 'email'],
-    extra=1,  # Nenhum formulário extra inicial
+    extra=0,  # Nenhum formulário extra inicial
     can_delete=True
 )
 
@@ -100,7 +100,7 @@ VendedorLojaFormSet = inlineformset_factory(
     Vendedor,
     form=VendedorForm,
     fields=['nome_vendedor', 'cpf_vendedor', 'celular_vendedor', 'email_vendedor', 'chave_pix'],
-    extra=1,  # Nenhum formulário extra inicial
+    extra=0,  # Nenhum formulário extra inicial
     min_num=0,
     can_delete=True
 )
@@ -111,7 +111,7 @@ DadosBancariosFormSet = inlineformset_factory(
     DadosBancarios,
     form=DadosBancariosForm,
     fields=['codigo','agencia', 'conta'],
-    extra=1,
+    extra=0,
     max_num=4,
     can_delete=True
 )
@@ -144,6 +144,6 @@ LojaAnexoFormSet = inlineformset_factory(
     LojaAnexo,
     form=LojaAnexoForm,
     fields=['tipo_documento', 'arquivo'],
-    extra=1,  # Quantos formulários extras deseja que apareçam inicialmente
+    extra=0,  # Quantos formulários extras deseja que apareçam inicialmente
     can_delete=True
 )

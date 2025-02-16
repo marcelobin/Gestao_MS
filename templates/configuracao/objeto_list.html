@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex align-items-center mb-4 titulo-container">
+        <h5 class="titulo-texto">Lista de {{ titulo_plural|capfirst }}</h5>
+    </div>
+    <hr>
+    
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url rota_create %}" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Criar Novo
+        </a>
+        <button class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#filtrosCollapse" aria-expanded="false">
+            <i class="fas fa-filter"></i> Filtros
+        </button>
+    </div>
+    
+    <div class="collapse mb-3" id="filtrosCollapse">
+        <div class="card card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3 form-floating">
+                    <input type="text" name="search" id="filtro_search" class="form-control" placeholder="Pesquisar" value="{{ request.GET.search }}">
+                    <label for="filtro_search">Pesquisar</label>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Filtrar</button>
+                    <a href="{% url rota_list %}" class="btn btn-outline-secondary ms-2"><i class="fas fa-times"></i> Limpar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>{{nome_modelo|title}}</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in objetos %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item }}</td>
+                        <td class="text-center">
+                            <a href="{% url rota_update item.id %}" class="btn btn-sm btn-warning" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url rota_delete item.id %}" class="btn btn-sm btn-danger" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">Nenhum registro encontrado</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

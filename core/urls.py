@@ -14,7 +14,7 @@ urlpatterns = [
     path('propostas/', include('propostas.urls')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('dashboard/', include('dashboard.urls')),  # Adiciona o dashboard às rotas
-
+    path('configuracao/', include('configuracao.urls')),
     
 
 ]

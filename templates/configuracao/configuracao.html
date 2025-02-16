@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Configurações do Sistema</h1>
+  <p>Selecione um item abaixo para gerenciar as configurações correspondentes:</p>
+  
+  <!-- Exemplo de Cards -->
+  <div class="row">
+    
+    <!-- Modalidades -->
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card text-center h-100 shadow">
+        <div class="card-body">
+          <i class="ri-booklet-line" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-2">Modalidades</h5>
+          <p class="card-text">Gerencie as modalidades do sistema.</p>
+          <a href="{% url 'configuracao:modalidade_list' %}" class="btn btn-primary">Acessar</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Segmentos -->
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card text-center h-100 shadow">
+        <div class="card-body">
+          <i class="ri-slideshow-line" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-2">Segmentos</h5>
+          <p class="card-text">Gerencie os segmentos.</p>
+          <a href="{% url 'configuracao:segmento_list' %}" class="btn btn-primary">Acessar</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Perfis -->
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card text-center h-100 shadow">
+        <div class="card-body">
+          <i class="ri-user-settings-line" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-2">Perfis</h5>
+          <p class="card-text">Gerencie os perfis de acesso do sistema.</p>
+          <a href="{% url 'configuracao:perfil_list' %}" class="btn btn-primary">Acessar</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Filiais -->
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card text-center h-100 shadow">
+        <div class="card-body">
+          <i class="ri-building-line" style="font-size: 2rem;"></i>
+          <h5 class="card-title mt-2">Filiais</h5>
+          <p class="card-text">Gerencie as filiais.</p>
+          <a href="{% url 'configuracao:filial_list' %}" class="btn btn-primary">Acessar</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

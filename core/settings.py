@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'dpd_static_support',
     'widget_tweaks',
-    
+    'configuracao',
 
 ]
 

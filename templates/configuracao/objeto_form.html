@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex align-items-center mb-4 titulo-container">
+        <h5 class="titulo-texto">
+            {% if form.instance.pk %}
+                Editar {{ nome_modelo }}
+            {% else %}
+                Criar {{ nome_modelo }}
+            {% endif %}
+        </h5>
+    </div>
+    <hr>
+
+    <div class="card formulario-card">
+        <div class="card-header">
+            <i class="fas fa-edit me-2"></i> Dados do {{ nome_modelo }}
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data" class="row g-3">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                <div class="col-md-6 form-floating">
+                    {% render_field field class="form-control" %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                </div>
+                {% endfor %}
+                
+                <div class="col-12 mt-3 d-flex justify-content-between">
+                    <a href="{% url rota_list %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

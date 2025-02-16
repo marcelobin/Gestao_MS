@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Excluir {{ nome_modelo }}</h1>
+<p>Tem certeza de que deseja excluir <strong>{{ object }}</strong>?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Confirmar</button>
+</form>
+
+<a href="{% url rota_list %}">
+    Cancelar
+</a>
+{% endblock %}
