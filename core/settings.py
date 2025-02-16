@@ -73,8 +73,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',
     'django_plotly_dash.middleware.ExternalRedirectionMiddleware',
-    
-]
+    'core.middleware.SessionTimeoutMiddleware'
+    ]
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -217,3 +218,20 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/index/'  # Página para onde o usuário será redirecionado após o login
+
+# Sessão do usuário - Tempo de expiração e segurança
+SESSION_COOKIE_AGE = 30 * 60  # 30 minutos
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Força logout ao fechar o navegador
+SESSION_SAVE_EVERY_REQUEST = True  # Salva a sessão a cada requisição para resetar o timer
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Armazena sessões no banco de dados
+
+# WebSockets com Redis - Expira conexões após 30 minutos
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+            "expiry": 1800,  # Expira conexões do Redis após 30 minutos
+        },
+    },
+}

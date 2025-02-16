@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div>
+    <div class="container-fluid" style="padding-top:1px;">
+        <div class="mb-3" style="margin-top: 10px;">
+            <h5 class="card-title">Pré-Cadastros de Lojas</h5>
+            <p>Lista de lojas aguardando aprovação.</p>
+        </div>
+        
+        <div class="tableFixHead">
+            <table class="table table-hover table-custom">
+                <thead>
+                    <tr>
+                        <th>Nome Fantasia</th>
+                        <th>Razão Social</th>
+                        <th>Filial</th>
+                        <th>Operador</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loja in lojas %}
+                    <tr>
+                        <td>{{ loja.nm_fantasia }}</td>
+                        <td>{{ loja.razao_social }}</td>
+                        <td>{{ loja.filial }}</td>
+                        <td>{{ loja.operador }}</td>
+                        <td>
+                            <a href="{% url 'lojas:loja_detail' loja.id %}" class="btn btn-sm btn-info"><i class="ri-eye-line"></i> Ver</a>
+                            <a href="{% url 'lojas:criar_editar_loja' loja.id %}" class="btn btn-sm btn-warning"><i class="ri-pencil-line"></i> Editar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhum pré-cadastro encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

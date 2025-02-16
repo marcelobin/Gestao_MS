@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Proposta, Veiculo, StatusProposta, PagamentoComissao
 from .forms import (
     PropostaForm, ClienteForm, VeiculoForm,
-    EnderecoClienteFormSet, ProfissaoClienteFormSet,ContatoClienteFormSet
+    EnderecoClienteForm, ProfissaoClienteForm, ContatoClienteForm
 )
 from clientes.models import Cliente, EnderecoCliente, ProfissaoCliente, ContatoCliente
 from financeiras.models import Financeira, Modalidade, Segmento, Produto
@@ -30,6 +30,8 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.utils import ImageReader
 from PIL import Image as PILImage
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 
@@ -38,22 +40,41 @@ from PIL import Image as PILImage
 # Defina o locale para pt_BR (Brasil)
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
-def criar_formsets(request, cliente=None, proposta=None, veiculo=None):
-    """
-    Função auxiliar para criar os formulários e formsets necessários.
-    """
-    proposta_form = PropostaForm(request.POST or None, instance=proposta)
-    cliente_form = ClienteForm(request.POST or None, instance=cliente)
-    veiculo_form = VeiculoForm(request.POST or None, instance=veiculo)
+@csrf_exempt
+def criar_vendedor(request):
+    if request.method == "POST":
+        nome_vendedor = request.POST.get("nome_vendedor")
+        cpf_vendedor = request.POST.get("cpf_vendedor")
+        celular_vendedor = request.POST.get("celular_vendedor")
+        email_vendedor = request.POST.get("email_vendedor", "")
+        chave_pix = request.POST.get("chave_pix", "")
+        loja_id = request.POST.get("loja")
 
-    # Se cliente existe, usa o cliente para o formset, senão, usa um Cliente vazio.
-    endereco_formset = EnderecoClienteFormSet(request.POST or None, instance=cliente or Cliente(), prefix="enderecos")
-    profissao_formset = ProfissaoClienteFormSet(request.POST or None, instance=cliente or Cliente(), prefix="profissoes")
-    contato_formset = ContatoClienteFormSet(request.POST or None, instance=cliente or Cliente(), prefix="contatos")
+        if not nome_vendedor or not cpf_vendedor or not celular_vendedor or not loja_id:
+            return JsonResponse({"success": False, "error": "Dados inválidos"})
 
-    return proposta_form, cliente_form, veiculo_form, endereco_formset, profissao_formset, contato_formset
+        try:
+            loja = Loja.objects.get(id=loja_id)
+            vendedor = Vendedor.objects.create(
+                nome_vendedor=nome_vendedor,
+                cpf_vendedor=cpf_vendedor,
+                celular_vendedor=celular_vendedor,
+                email_vendedor=email_vendedor,
+                chave_pix=chave_pix,
+                loja=loja
+            )
+
+            return JsonResponse({"success": True, "vendedor_id": vendedor.id})
+        except Loja.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Loja não encontrada"})
+    return JsonResponse({"success": False, "error": "Método inválido"})
+
 
 def proposta_form_view(request, pk=None):
+    """
+    View corrigida para evitar duplicados em (cliente, loja, operador) e
+    preencher corretamente os campos de profissão/contato/endereço.
+    """
     if pk:
         proposta = get_object_or_404(Proposta, pk=pk)
         cliente = proposta.cliente
@@ -65,149 +86,145 @@ def proposta_form_view(request, pk=None):
         veiculo = None
         titulo_pagina = "Cadastrar Proposta"
 
-    if request.method == "POST":
-        cpf = request.POST.get('nr_cpf', '').replace('.', '').replace('-', '')
+    # Endereço, profissão e contato, inicialmente None
+    endereco = None
+    profissao = None
+    contato = None
 
+    if request.method == "POST":
+        # Tenta identificar o cliente via CPF
+        cpf = request.POST.get('nr_cpf', '').replace('.', '').replace('-', '')
         if cpf:
             cliente = Cliente.objects.filter(nr_cpf=cpf).first()
 
-        # Cria os formsets
-        proposta_form, cliente_form, veiculo_form, endereco_formset, profissao_formset, contato_formset = criar_formsets(
-            request, cliente, proposta, veiculo
+        # Primeiro criamos o PropostaForm para descobrir loja/operador
+        proposta_form = PropostaForm(request.POST, instance=proposta)
+        cliente_form = ClienteForm(request.POST, instance=cliente)
+        veiculo_form = VeiculoForm(request.POST, instance=veiculo)
+
+        # Precisamos validar a proposta para obter 'loja' e 'operador'
+        if proposta_form.is_valid():
+            loja = proposta_form.cleaned_data['loja']
+            operador = proposta_form.cleaned_data['operador']
+        else:
+            loja = None
+            operador = None
+
+        # Se temos cliente, loja e operador, buscamos registros existentes
+        if cliente and loja and operador:
+            endereco = EnderecoCliente.objects.filter(
+                cliente=cliente, loja=loja, operador=operador
+            ).first()
+            profissao = ProfissaoCliente.objects.filter(
+                cliente=cliente, loja=loja, operador=operador
+            ).first()
+            contato = ContatoCliente.objects.filter(
+                cliente=cliente, loja=loja, operador=operador
+            ).first()
+
+        # Instancia os forms com as instâncias corretas
+        endereco_form = EnderecoClienteForm(request.POST, instance=endereco, prefix="endereco")
+        profissao_form = ProfissaoClienteForm(request.POST, instance=profissao, prefix="profissao")
+        contato_form = ContatoClienteForm(request.POST, instance=contato, prefix="contato")
+
+        # Valida todos
+        forms_validos = (
+            proposta_form.is_valid() and
+            cliente_form.is_valid() and
+            veiculo_form.is_valid() and
+            endereco_form.is_valid() and
+            profissao_form.is_valid() and
+            contato_form.is_valid()
         )
 
-        if all([
-            proposta_form.is_valid(),
-            cliente_form.is_valid(),
-            veiculo_form.is_valid(),
-            endereco_formset.is_valid(),
-            profissao_formset.is_valid(),
-            contato_formset.is_valid(),
-        ]):
-            cliente = cliente_form.save(commit=False)
-            cliente.save()
+        if forms_validos:
+            # Salva/atualiza o cliente
+            cliente = cliente_form.save()
 
-            loja = proposta_form.cleaned_data.get('loja')
-            operador = proposta_form.cleaned_data.get('operador')
+            # Salva ou atualiza endereço
+            end_inst = endereco_form.save(commit=False)
+            end_inst.cliente = cliente
+            end_inst.loja = loja
+            end_inst.operador = operador
+            end_inst.save()
 
-            # Atualiza ou cria os endereços (evitando erro UNIQUE)
-            for form in endereco_formset:
-                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                    cep = form.cleaned_data.get('cep')
-                    EnderecoCliente.objects.update_or_create(
-                        cliente=cliente,
-                        loja=loja,
-                        operador=operador,
-                        cep=cep,
-                        defaults={
-                            "endereco": form.cleaned_data.get("endereco"),
-                            "bairro": form.cleaned_data.get("bairro"),
-                            "cidade": form.cleaned_data.get("cidade"),
-                            "uf": form.cleaned_data.get("uf"),
-                        }
-                    )
+            # Salva ou atualiza profissão
+            prof_inst = profissao_form.save(commit=False)
+            prof_inst.cliente = cliente
+            prof_inst.loja = loja
+            prof_inst.operador = operador
+            prof_inst.save()
 
-            # Atualiza ou cria as profissões (evitando erro UNIQUE)
-            for form in profissao_formset:
-                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                    cargo = form.cleaned_data.get('cargo')
-                    ProfissaoCliente.objects.update_or_create(
-                        cliente=cliente,
-                        loja=loja,
-                        operador=operador,
-                        cargo=cargo,
-                        defaults={
-                            "renda": form.cleaned_data.get("renda"),
-                            "outras_rendas": form.cleaned_data.get("outras_rendas"),
-                            "local_trabalho": form.cleaned_data.get("local_trabalho"),
-                        }
-                    )
+            # Salva ou atualiza contato
+            cont_inst = contato_form.save(commit=False)
+            cont_inst.cliente = cliente
+            cont_inst.loja = loja
+            cont_inst.operador = operador
+            cont_inst.save()
 
-            # Atualiza ou cria os contatos (evitando erro UNIQUE)
-            for form in contato_formset:
-                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                    telefone = form.cleaned_data.get("telefone_fixo")
-                    celular = form.cleaned_data.get("celular")
-                    email   = form.cleaned_data.get("email")
-                    ContatoCliente.objects.update_or_create(
-                        cliente=cliente,
-                        loja=loja,
-                        operador=operador,
-                        defaults={
-                            "telefone_fixo": telefone,
-                            "celular": celular,
-                            "email": email,
-                        }
-                    )
-
-            # Processa o formulário de veículo
+            # Salva o veículo
             veiculo = veiculo_form.save()
 
-            # Processa o formulário de proposta
+            # Salva a proposta
             proposta = proposta_form.save(commit=False)
             proposta.cliente = cliente
             proposta.veiculo = veiculo
 
-            # Extrai o vendedor do POST; se não houver valor, atribui None
+            # Ajusta vendedor
             vendedor_id = request.POST.get('vendedor', '').strip()
             if vendedor_id:
                 try:
-                    from lojas.models import Vendedor  # Certifique-se de que esse import esteja correto
+                    from lojas.models import Vendedor
                     proposta.vendedor = Vendedor.objects.get(pk=vendedor_id)
                 except Vendedor.DoesNotExist:
                     proposta.vendedor = None
             else:
                 proposta.vendedor = None
 
-            # Atribui automaticamente a filial do operador, se não estiver definida
+            # Atribui filial do operador, se não estiver definida
             if not proposta.filial and proposta.operador:
                 proposta.filial = proposta.operador.filial
 
             proposta.save()
-
             return redirect('propostas:listar_propostas')
 
     else:
-        proposta_form, cliente_form, veiculo_form, endereco_formset, profissao_formset, contato_formset = criar_formsets(
-            request, cliente, proposta, veiculo
-        )
+        # GET
+        if cliente:
+            # Se já existe, filtra (cliente, loja, operador) da proposta (se houver)
+            loja = proposta.loja if proposta and proposta.loja else None
+            operador = proposta.operador if proposta and proposta.operador else None
+            if loja and operador:
+                endereco = EnderecoCliente.objects.filter(cliente=cliente, loja=loja, operador=operador).first()
+                profissao = ProfissaoCliente.objects.filter(cliente=cliente, loja=loja, operador=operador).first()
+                contato = ContatoCliente.objects.filter(cliente=cliente, loja=loja, operador=operador).first()
 
-    # ✅ Aplicando a formatação correta ao `vl_veiculo` (igual `vl_financiado` e `vl_parcela`)
+        proposta_form = PropostaForm(instance=proposta)
+        cliente_form = ClienteForm(instance=cliente)
+        veiculo_form = VeiculoForm(instance=veiculo)
+        endereco_form = EnderecoClienteForm(instance=endereco, prefix="endereco")
+        profissao_form = ProfissaoClienteForm(instance=profissao, prefix="profissao")
+        contato_form = ContatoClienteForm(instance=contato, prefix="contato")
+
+    # Ajuste de formatação de valores monetários
     if proposta:
-        proposta_form.initial['vl_financiado'] = locale.format_string('%.2f', proposta.vl_financiado, grouping=True) if proposta.vl_financiado else ''
-        proposta_form.initial['vl_parcela'] = locale.format_string('%.2f', proposta.vl_parcela, grouping=True) if proposta.vl_parcela else ''
+        if proposta.vl_financiado:
+            proposta_form.initial['vl_financiado'] = locale.format_string('%.2f', proposta.vl_financiado, grouping=True)
+        if proposta.vl_parcela:
+            proposta_form.initial['vl_parcela'] = locale.format_string('%.2f', proposta.vl_parcela, grouping=True)
 
-    if veiculo:
-        veiculo_form.initial['vl_veiculo'] = locale.format_string('%.2f', veiculo.vl_veiculo, grouping=True) if veiculo.vl_veiculo else ''
+    if veiculo and veiculo.vl_veiculo:
+        veiculo_form.initial['vl_veiculo'] = locale.format_string('%.2f', veiculo.vl_veiculo, grouping=True)
 
-    if cliente:
-        cliente_form.initial['renda'] = ''
-        cliente_form.initial['outras_rendas'] = ''
-        if cliente.profissoes.exists():
-            maior_renda = 0
-            maior_outras_rendas = 0
-            for profissao in cliente.profissoes.all():
-                if profissao.renda:
-                    maior_renda = max(maior_renda, profissao.renda)
-                if profissao.outras_rendas:
-                    maior_outras_rendas = max(maior_outras_rendas, profissao.outras_rendas)
-            cliente_form.initial['renda'] = locale.format_string('%.2f', maior_renda, grouping=True)
-            cliente_form.initial['outras_rendas'] = locale.format_string('%.2f', maior_outras_rendas, grouping=True)
-
-        for index, pform in enumerate(profissao_formset):
-            if cliente.profissoes.all().count() > index:
-                profissao = cliente.profissoes.all()[index]
-                pform.initial['renda'] = locale.format_string('%.2f', profissao.renda, grouping=True) if profissao.renda else ''
-                pform.initial['outras_rendas'] = locale.format_string('%.2f', profissao.outras_rendas, grouping=True) if profissao.outras_rendas else ''
-
+    # Dados para o JS
     initial_data = {
-        'loja_id': proposta.loja.id if proposta and proposta.loja else '',
-        'vendedor_id': proposta.vendedor.id if proposta and proposta.vendedor else '',
-        'segmento_id': proposta.segmento.id if proposta and proposta.segmento else '',
-        'produto_id': proposta.produto.id if proposta and proposta.produto else '',
-        'operador_id': proposta.operador.id if proposta and proposta.operador else '',
-        'financeira_id': proposta.financeira.id if proposta and proposta.financeira else '',
-        'modalidade_id': proposta.modalidade.id if proposta and proposta.modalidade else '',
+        'loja_id': proposta.loja.id if (proposta and proposta.loja) else '',
+        'vendedor_id': proposta.vendedor.id if (proposta and proposta.vendedor) else '',
+        'segmento_id': proposta.segmento.id if (proposta and proposta.segmento) else '',
+        'produto_id': proposta.produto.id if (proposta and proposta.produto) else '',
+        'operador_id': proposta.operador.id if (proposta and proposta.operador) else '',
+        'financeira_id': proposta.financeira.id if (proposta and proposta.financeira) else '',
+        'modalidade_id': proposta.modalidade.id if (proposta and proposta.modalidade) else '',
     }
 
     return render(request, 'propostas/proposta_form.html', {
@@ -216,17 +233,20 @@ def proposta_form_view(request, pk=None):
         'proposta_form': proposta_form,
         'cliente_form': cliente_form,
         'veiculo_form': veiculo_form,
-        'endereco_formset': endereco_formset,
-        'profissao_formset': profissao_formset,
-        'contato_formset': contato_formset,
-        'formsets': [endereco_formset, profissao_formset, contato_formset],
+        'endereco_form': endereco_form,
+        'profissao_form': profissao_form,
+        'contato_form': contato_form,
+        'formsets': [],
         **initial_data,
     })
+
+
 
 def listar_propostas(request):
     propostas = Proposta.objects.select_related('cliente', 'veiculo', 'status').all()
     titulo_pagina = "Minhas Propostas"
-    # Aplicando filtros
+
+    # Obtendo os parâmetros da requisição GET
     filtro_financeira = request.GET.get('financeira')
     filtro_loja = request.GET.get('loja')
     filtro_operador = request.GET.get('operador')
@@ -235,7 +255,9 @@ def listar_propostas(request):
     filtro_dt_proposta_fim = request.GET.get('dt_proposta_fim')
     filtro_dt_pagamento_inicio = request.GET.get('dt_pagamento_inicio')
     filtro_dt_pagamento_fim = request.GET.get('dt_pagamento_fim')
+    filtro_search_cliente = request.GET.get('search_cliente', '').strip()
 
+    # Aplicação dos filtros
     if filtro_financeira:
         propostas = propostas.filter(financeira_id=filtro_financeira)
     if filtro_loja:
@@ -253,6 +275,15 @@ def listar_propostas(request):
     if filtro_dt_pagamento_fim:
         propostas = propostas.filter(dt_pagamento__lte=filtro_dt_pagamento_fim)
 
+    # Filtrando por CPF ou Nome do Cliente
+    if filtro_search_cliente:
+        if filtro_search_cliente.replace('.', '').replace('-', '').isdigit():
+            # Se for um CPF (apenas números), buscar por CPF
+            propostas = propostas.filter(cliente__nr_cpf__icontains=filtro_search_cliente.replace(".", "").replace("-", ""))
+        else:
+            # Se for texto, buscar pelo Nome do Cliente
+            propostas = propostas.filter(cliente__nm_cliente__icontains=filtro_search_cliente)
+
     # Ordenação
     ordering = request.GET.get('ordering', 'nr_proposta')
     reverse = request.GET.get('reverse', 'false')
@@ -263,7 +294,7 @@ def listar_propostas(request):
         propostas = propostas.order_by(ordering)
 
     # Paginação
-    registros_por_pagina = int(request.GET.get('registros_por_pagina', 100))  # Padrão: 10 registros por página
+    registros_por_pagina = int(request.GET.get('registros_por_pagina', 100))
     paginator = Paginator(propostas, registros_por_pagina)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
@@ -289,11 +320,11 @@ def listar_propostas(request):
         'filtro_dt_proposta_fim': filtro_dt_proposta_fim,
         'filtro_dt_pagamento_inicio': filtro_dt_pagamento_inicio,
         'filtro_dt_pagamento_fim': filtro_dt_pagamento_fim,
+        'filtro_search_cliente': filtro_search_cliente,
         'ordering': ordering,
         'reverse': reverse,
         'registros_por_pagina': registros_por_pagina,
         'titulo_pagina': titulo_pagina,
-
     }
 
     return render(request, 'propostas/listar_propostas.html', context)
@@ -348,54 +379,8 @@ def get_lojas(request):
         return JsonResponse(list(lojas), safe=False)
     return JsonResponse([], safe=False)
 
-def editar_proposta(request, pk):
-    proposta = get_object_or_404(Proposta, pk=pk)
-    cliente = proposta.cliente
-    veiculo = proposta.veiculo
-
-    if request.method == "POST":
-        proposta_form = PropostaForm(request.POST, instance=proposta)
-        cliente_form = ClienteForm(request.POST, instance=cliente)
-        veiculo_form = VeiculoForm(request.POST, instance=veiculo)
-
-        endereco_formset = EnderecoClienteFormSet(request.POST, instance=cliente)
-        profissao_formset = ProfissaoClienteFormSet(request.POST, instance=cliente)
-
-        if (
-            proposta_form.is_valid()
-            and cliente_form.is_valid()
-            and veiculo_form.is_valid()
-            and endereco_formset.is_valid()
-            and profissao_formset.is_valid()
-        ):
-            proposta_form.save()
-            cliente_form.save()
-            veiculo_form.save()
-            endereco_formset.save()
-            profissao_formset.save()
-            return redirect('propostas:listar_propostas')
-    else:
-        proposta_form = PropostaForm(instance=proposta)
-        cliente_form = ClienteForm(instance=cliente)
-        veiculo_form = VeiculoForm(instance=veiculo)
-        endereco_formset = EnderecoClienteFormSet(instance=cliente)
-        profissao_formset = ProfissaoClienteFormSet(instance=cliente)
-
-    return render(request, 'propostas/editar_proposta.html', {
-        'proposta_form': proposta_form,
-        'cliente_form': cliente_form,
-        'veiculo_form': veiculo_form,
-        'endereco_formset': endereco_formset,
-        'profissao_formset': profissao_formset,
-        'proposta': proposta,
-    })
 
 def verificar_cliente_api(request):
-    """
-    Verifica se um cliente com CPF existe.
-    Se sim, retorna dados básicos e, se a 'loja_id' e 'operador_id' baterem,
-    retorna também endereços/contatos/profissoes para reutilizar.
-    """
     cpf      = request.GET.get('cpf', '').replace('.', '').replace('-', '')
     loja_id  = request.GET.get('loja_id')
     operador_id = request.GET.get('operador_id')
@@ -410,56 +395,65 @@ def verificar_cliente_api(request):
             data['dt_nascimento']= str(cliente.dt_nascimento) if cliente.dt_nascimento else ''
             data['rg_cliente']   = cliente.rg_cliente or ''
             data['nm_mae']       = cliente.nm_mae or ''
-            # etc
+            data['sexo']         = cliente.sexo or ''
 
-            # Verifica se o user deve "reutilizar" endereços, contatos, etc.
-            # Critério: se "loja_id" e "operador_id" coincidem com as do EnderecoCliente/ContatoCliente...
-            # MAS primeiro precisamos ter adicionado "loja" e "operador" a EnderecoCliente se for esse o critério
-            # Exemplo:
-            #   enderecos = EnderecoCliente.objects.filter(cliente=cliente, loja_id=loja_id, operador_id=operador_id)
-            # Se não existirem esses campos, você decide outra lógica.
-
+            # Agora, filtra endereços, contatos e profissões apenas se
+            # a loja_id e operador_id forem compatíveis com as instâncias
             enderecos = []
             contatos  = []
             profissoes= []
-            
-            # Exemplo de verificação:
-            # if ... (some logic) ...
-            #   Reaproveita
-            end_objs = EnderecoCliente.objects.filter(cliente=cliente)
-            enderecos = [{
-                'id': e.id,
-                'cep': e.cep,
-                'endereco': e.endereco,
-                'nro': e.nro,
-                'complemento': e.complemento,
-                'bairro': e.bairro,
-                'cidade': e.cidade,
-                'uf': e.uf,
-            } for e in end_objs]
 
-            cont_objs = ContatoCliente.objects.filter(cliente=cliente)
-            contatos = [{
-                'id': c.id,
-                'telefone_fixo': c.telefone_fixo,
-                'celular': c.celular,
-                'email': c.email,
-            } for c in cont_objs]
+            if loja_id and operador_id:
+                end_objs = EnderecoCliente.objects.filter(
+                    cliente=cliente,
+                    loja_id=loja_id,
+                    operador_id=operador_id
+                )
+                enderecos = [{
+                    'id': e.id,
+                    'cep': e.cep,
+                    'endereco': e.endereco,
+                    'nro': e.nro,
+                    'complemento': e.complemento,
+                    'bairro': e.bairro,
+                    'cidade': e.cidade,
+                    'uf': e.uf,
+                } for e in end_objs]
 
-            prof_objs = ProfissaoCliente.objects.filter(cliente=cliente)
-            profissoes = [{
-                'id': p.id,
-                'profissao': p.profissao,
-                'cargo': p.cargo,
-                # ...
-            } for p in prof_objs]
+                cont_objs = ContatoCliente.objects.filter(
+                    cliente=cliente,
+                    loja_id=loja_id,
+                    operador_id=operador_id
+                )
+                contatos = [{
+                    'id': c.id,
+                    'telefone_fixo': c.telefone_fixo,
+                    'celular': c.celular,
+                    'email': c.email,
+                } for c in cont_objs]
+
+                prof_objs = ProfissaoCliente.objects.filter(
+                    cliente=cliente,
+                    loja_id=loja_id,
+                    operador_id=operador_id
+                )
+                profissoes = [{
+                    'id': p.id,
+                    'profissao': p.profissao,
+                    'cargo': p.cargo,
+                    'local_trabalho': p.local_trabalho or '',
+                    'data_admissao': str(p.data_admissao) if p.data_admissao else '',
+                    'renda': str(p.renda or ''),
+                    'outras_rendas': str(p.outras_rendas or ''),
+                    'fone_lt': p.fone_lt or ''
+                } for p in prof_objs]
 
             data['enderecos']   = enderecos
             data['contatos']    = contatos
             data['profissoes']  = profissoes
-            # Se a lógica diz "só reutiliza se for a mesma loja/operador", decida se retorna
-            data['reutilizar_enderecos'] = True  # ou False conforme a regra
+            data['reutilizar_enderecos'] = True
     return JsonResponse(data)
+
 
 def get_modalidades_por_financeira(request):
     """Retorna (de forma DISTINCT) as Modalidades disponíveis para a Financeira informada,
@@ -598,7 +592,6 @@ def gerar_lista_periodos(qtd=12):
     return meses
 
 def lojas_elegiveis(request):
-    # Obtém o período selecionado no formato "AAAA-MM"
     periodo = request.GET.get('periodo')
     if periodo:
         try:
@@ -619,7 +612,6 @@ def lojas_elegiveis(request):
         end_date = hoje.replace(day=last_day)
         periodo = f"{hoje.year}-{hoje.month:02d}"
 
-    # Filtra as propostas do período
     propostas_do_periodo = Proposta.objects.filter(dt_proposta__gte=start_date, dt_proposta__lte=end_date)
     lojas_ids = propostas_do_periodo.values_list('loja', flat=True).distinct()
 
@@ -627,39 +619,48 @@ def lojas_elegiveis(request):
     for loja_id in lojas_ids:
         loja = get_object_or_404(Loja, pk=loja_id)
 
-        # Todas as propostas (incluindo pagas)
-        todas_propostas = propostas_do_periodo.filter(loja=loja)
+        # Só consideramos propostas pagas (dt_pagamento preenchido)
+        propostas_pagas = propostas_do_periodo.filter(loja=loja, financeira__nome_financeira__iexact="Daycoval", dt_pagamento__isnull=False)
 
-        # Calcula o total financiado
-        total_financiado = todas_propostas.aggregate(Sum('vl_financiado'))['vl_financiado__sum'] or Decimal("0.00")
+        total_financiado = propostas_pagas.aggregate(
+            Sum('vl_financiado')
+        )['vl_financiado__sum'] or Decimal("0.00")
 
-        # Propostas pendentes de pagamento de comissão
-        propostas_pendentes = todas_propostas.filter(dt_pagamento_retorno__isnull=True)
-        total_pendente = propostas_pendentes.aggregate(
+        # Propostas pagas da financeira Daycoval
+        propostas_daycoval = propostas_pagas
+
+        # Comissão pendente (retorno não pago)
+        total_pendente = propostas_daycoval.filter(dt_pagamento_retorno__isnull=True).aggregate(
             total_comissao=Sum(F('vl_financiado') * Decimal("0.012"), output_field=DecimalField())
         )['total_comissao'] or Decimal("0.00")
 
-        # Calcula o total da comissão paga
-        total_comissao_paga = todas_propostas.filter(dt_pagamento_retorno__isnull=False).aggregate(
+        # Comissão paga (retorno já efetivado)
+        total_comissao_paga = propostas_daycoval.filter(dt_pagamento_retorno__isnull=False).aggregate(
             total_comissao=Sum(F('vl_financiado') * Decimal("0.012"), output_field=DecimalField())
         )['total_comissao'] or Decimal("0.00")
 
-        # Cria a lista de propostas formatadas
         propostas_formatadas = []
-        for proposta in todas_propostas:
+        for proposta in propostas_daycoval:
             vl_financiado = Decimal(proposta.vl_financiado or 0)
             comissao = vl_financiado * Decimal("0.012")
+
             propostas_formatadas.append({
                 "id": proposta.id,
                 "nr_proposta": proposta.nr_proposta,
                 "cliente": proposta.cliente.nm_cliente if proposta.cliente else "Sem Cliente",
+                "financeira": "Daycoval",
+                "dt_pagamento": proposta.dt_pagamento,
                 "vl_financiado": vl_financiado,
                 "comissao": comissao,
                 "dt_pagamento_retorno": proposta.dt_pagamento_retorno,
             })
 
-        # Define a elegibilidade com base na comissão pendente
-        elegivel = total_pendente >= Decimal("300")
+        # Loja é elegível se a produção total paga >= 30.000
+        elegivel = total_financiado >= Decimal("30000")
+
+        # >>> Se não for elegível, não adiciona na lista final <<<
+        if not elegivel:
+            continue
 
         lojas_elegiveis_list.append({
             'loja': loja,
@@ -670,11 +671,9 @@ def lojas_elegiveis(request):
             'elegivel': elegivel,
         })
 
-    # Dados adicionais para preencher os filtros no template
     periodos = gerar_lista_periodos(12)
     lojas_all = Loja.objects.all()
     operadores = Operador.objects.all()
-    # Se o modelo Loja possuir o campo 'filial', extrai os valores únicos; ajuste se necessário
     filiais = list({loja.filial for loja in lojas_all if getattr(loja, 'filial', None)})
 
     context = {

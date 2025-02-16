@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from.forms import UserForm, OperadorForm
-from.models import Operador
 from django.contrib.auth import authenticate, login
+from .forms import UserForm, OperadorForm
+from .models import Operador
 
 def login_view(request):
+    """Autentica o usuário e redireciona para a home."""
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -23,11 +24,14 @@ def login_view(request):
 
 @login_required
 def lista_usuarios(request):
+    """Lista todos os usuários cadastrados."""
     operadores = Operador.objects.select_related('user')
     return render(request, 'usuarios/lista_usuarios.html', {'operadores': operadores})
 
+
 @login_required
 def criar_usuario(request):
+    """Cria um novo usuário e operador associado."""
     if request.method == 'POST':
         user_form = UserForm(request.POST)
         operador_form = OperadorForm(request.POST)
@@ -39,15 +43,8 @@ def criar_usuario(request):
             operador.save()  # Salva o Operador
             messages.success(request, 'Usuário e operador criados com sucesso!')
             return redirect('usuarios:lista_usuarios')
-        else:  # Adicione este bloco para exibir erros nos formulários
-            messages.error(request, 'Erro ao criar usuário. Verifique os campos.')
-            # Recarrega os formulários com os dados inválidos para exibir os erros
-            return render(request, 'usuarios/usuario_form.html', {
-                'user_form': user_form,
-                'operador_form': operador_form
-            })
 
-
+        messages.error(request, 'Erro ao criar usuário. Verifique os campos.')
     else:
         user_form = UserForm()
         operador_form = OperadorForm()
@@ -57,8 +54,10 @@ def criar_usuario(request):
         'operador_form': operador_form
     })
 
+
 @login_required
 def editar_usuario(request, pk):
+    """Edita um usuário e operador existente."""
     operador = get_object_or_404(Operador, pk=pk)
     user = operador.user
 
@@ -67,11 +66,22 @@ def editar_usuario(request, pk):
         operador_form = OperadorForm(request.POST, instance=operador)
 
         if user_form.is_valid() and operador_form.is_valid():
-            user_form.save()
+            user = user_form.save(commit=False)
+            password = user_form.cleaned_data.get('password')
+
+            if password:  # Se o usuário informou uma nova senha, criptografa antes de salvar
+                user.set_password(password)
+            else:
+                # Mantém a senha antiga se nenhum novo valor foi inserido
+                user.password = User.objects.get(pk=user.pk).password
+
+            user.save()
             operador_form.save()
+
             messages.success(request, 'Usuário e operador atualizados com sucesso!')
             return redirect('usuarios:lista_usuarios')
-        else: # Adicione este bloco para exibir os erros.
+
+        else:
             messages.error(request, 'Erro ao editar usuário. Verifique os campos.')
             return render(request, 'usuarios/usuario_form.html', {
                 'user_form': user_form,
@@ -89,6 +99,7 @@ def editar_usuario(request, pk):
 
 @login_required
 def excluir_usuario(request, pk):
+    """Exclui um usuário e operador associado."""
     operador = get_object_or_404(Operador, pk=pk)
     user = operador.user
 
@@ -98,4 +109,3 @@ def excluir_usuario(request, pk):
         return redirect('usuarios:lista_usuarios')
 
     return render(request, 'usuarios/confirmar_exclusao.html', {'operador': operador})
-

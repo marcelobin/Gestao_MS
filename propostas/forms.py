@@ -1,11 +1,10 @@
 from django import forms
-from django.forms import inlineformset_factory
 from .models import Proposta, Veiculo
 from clientes.models import (
     Cliente,
     EnderecoCliente,
     ProfissaoCliente,
-    ContatoCliente  # <--- Importamos também o model de Contato
+    ContatoCliente
 )
 from financeiras.models import Financeira, Modalidade, Segmento, Produto
 
@@ -18,7 +17,7 @@ class DateInput(forms.DateInput):
         super().__init__(*args, **kwargs)
 
 # ------------------------------------------------------------------
-# -------------- Forms de Cliente e seus inlines -------------------
+# -------------- Forms de Cliente e Relacionados -------------------
 # ------------------------------------------------------------------
 
 class ClienteForm(forms.ModelForm):
@@ -36,7 +35,7 @@ class ClienteForm(forms.ModelForm):
             'nr_cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'nm_cliente': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'dt_nascimento': DateInput(format='%Y-%m-%d',
-                                            attrs={'class': 'form-control', 'placeholder': ' '}),
+                                       attrs={'class': 'form-control', 'placeholder': ' '}),
             'sexo': forms.Select(attrs={'class': 'form-control', 'placeholder': ' '}),
             'nm_mae': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'rg_cliente': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': ' '}),
@@ -50,7 +49,10 @@ class ClienteForm(forms.ModelForm):
 class EnderecoClienteForm(forms.ModelForm):
     class Meta:
         model = EnderecoCliente
-        fields = ['cep', 'endereco', 'nro', 'complemento', 'bairro', 'cidade', 'uf', 'loja', 'operador']
+        fields = [
+            'cep', 'endereco', 'nro', 'complemento',
+            'bairro', 'cidade', 'uf', 'loja', 'operador'
+        ]
         widgets = {
             'cep': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'endereco': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
@@ -59,8 +61,8 @@ class EnderecoClienteForm(forms.ModelForm):
             'bairro': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'cidade': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'uf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
-            'loja': forms.HiddenInput(),  # Campo escondido
-            'operador': forms.HiddenInput(),  # Campo escondido            
+            'loja': forms.HiddenInput(),
+            'operador': forms.HiddenInput(),
         }
 
 
@@ -68,31 +70,20 @@ class ProfissaoClienteForm(forms.ModelForm):
     class Meta:
         model = ProfissaoCliente
         fields = [
-            'profissao',
-            'cargo',
-            'local_trabalho',
-            'data_admissao',
-            'renda',
-            'outras_rendas',
-            'fone_lt',
-            'loja',
-            'operador',
+            'profissao', 'cargo', 'local_trabalho', 'data_admissao',
+            'renda', 'outras_rendas', 'fone_lt', 'loja', 'operador',
         ]
         widgets = {
             'profissao': forms.Select(attrs={'class': 'form-control', 'placeholder': ' '}),
             'cargo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'local_trabalho': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'data_admissao': DateInput(format='%Y-%m-%d',
-                                            attrs={'class': 'form-control', 'placeholder': ' '}),
-            'renda': forms.TextInput(
-                attrs={'class': 'form-control money', 'placeholder': ''}
-            ),
+                                       attrs={'class': 'form-control', 'placeholder': ' '}),
+            'renda': forms.TextInput(attrs={'class': 'form-control money', 'placeholder': ''}),
+            'outras_rendas': forms.TextInput(attrs={'class': 'form-control money', 'placeholder': ''}),
             'fone_lt': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
-            'outras_rendas': forms.TextInput(
-                attrs={'class': 'form-control money', 'placeholder': ''}
-            ),
-            'loja': forms.HiddenInput(),  # Campo escondido
-            'operador': forms.HiddenInput(),  # Campo escondido
+            'loja': forms.HiddenInput(),
+            'operador': forms.HiddenInput(),
         }
 
 
@@ -104,40 +95,10 @@ class ContatoClienteForm(forms.ModelForm):
             'telefone_fixo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'celular': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': ' '}),
-            'loja': forms.HiddenInput(),  # Campo escondido
-            'operador': forms.HiddenInput(),  # Campo escondido           
+            'loja': forms.HiddenInput(),
+            'operador': forms.HiddenInput(),
         }
 
-
-# ---------------- InlineFormSets ----------------
-EnderecoClienteFormSet = inlineformset_factory(
-    Cliente,
-    EnderecoCliente,
-    form=EnderecoClienteForm,
-    fields=['cep', 'endereco', 'nro', 'complemento', 'bairro', 'cidade', 'uf'],
-    extra=1,
-    can_delete=False,
-    max_num=1
-)
-
-ProfissaoClienteFormSet = inlineformset_factory(
-    Cliente,
-    ProfissaoCliente,
-    form=ProfissaoClienteForm,
-    fields=['profissao', 'cargo', 'local_trabalho', 'data_admissao', 'renda', 'outras_rendas', 'fone_lt'],
-    extra=1,
-    can_delete=False,
-    max_num=1
-)
-
-ContatoClienteFormSet = inlineformset_factory(
-    Cliente,
-    ContatoCliente,
-    form=ContatoClienteForm,
-    fields=['telefone_fixo', 'celular', 'email'],
-    extra=1,
-    can_delete=True
-)
 # ------------------------------------------------------------------
 # -------------- Form de Veículo -----------------------------------
 # ------------------------------------------------------------------
@@ -156,37 +117,22 @@ class VeiculoForm(forms.ModelForm):
             'vl_veiculo',
         ]
         widgets = {
-            'marca': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': ' '}
-            ),
-            'modelo': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': ' '}
-            ),
-            'ano_fabricacao': forms.NumberInput(
-                attrs={'class': 'form-control', 'placeholder': ' '}
-            ),
-            'ano_modelo': forms.NumberInput(
-                attrs={'class': 'form-control', 'placeholder': ' '}
-            ),            
-            'placa': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': ' '}
-            ),
-            'renavam': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': ' '}
-            ),
-            'chassi': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': ' '}
-            ),
-            'uf': forms.TextInput(
-                attrs={'class': 'form-control', 'placeholder': ' '}
-            ),            
-            'vl_veiculo': forms.TextInput(attrs={'class': 'form-control money', 'placeholder': ' '}),  # Mantém o TextInput
-
+            'marca': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'modelo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'ano_fabricacao': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'ano_modelo': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'placa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'renavam': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'chassi': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'uf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'vl_veiculo': forms.TextInput(attrs={'class': 'form-control money', 'placeholder': ' '}),
         }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-            self.fields['vl_veiculo'].initial = f"{self.instance.vl_veiculo:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")        
+            self.fields['vl_veiculo'].initial = f"{self.instance.vl_veiculo:,.2f}" \
+                .replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 class PropostaForm(forms.ModelForm):

@@ -22,7 +22,9 @@ class Loja(models.Model):
     email = models.EmailField("E-mail",max_length=50, null=True, blank=True)
     STATUS_CHOICES = (
         ('P', 'Pré-Cadastro'),
-        ('A', 'Aprovada'),
+        ('A', 'Ativa'),
+        ('I', 'Inativa'),
+        ('B', 'Bloqueada'),
     )
     status = models.CharField("Status", max_length=1, choices=STATUS_CHOICES, default='P')    
 

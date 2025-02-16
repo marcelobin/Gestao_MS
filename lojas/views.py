@@ -17,6 +17,7 @@ from django.conf import settings
 import json
 import os
 from pathlib import Path
+from django.views.decorators.csrf import csrf_exempt
 
 
 # View para listar lojas
@@ -140,11 +141,10 @@ def pre_cadastro_loja(request):
         socio_formset = SocioLojaFormSet(request.POST, request.FILES, instance=None, prefix='socios')
         vendedor_formset = VendedorLojaFormSet(request.POST, instance=None, prefix='vendedores')
         dadosbancarios_formset = DadosBancariosFormSet(request.POST, instance=None, prefix='dadosbancarios')
-        acesso_formset = LojaFinanceiraAcessoFormSet(request.POST, instance=None, prefix='acessos_financeiras')
         anexo_formset = LojaAnexoFormSet(request.POST, request.FILES, instance=None, prefix='anexos')
-        
+
         if (form.is_valid() and socio_formset.is_valid() and vendedor_formset.is_valid() and 
-            dadosbancarios_formset.is_valid() and acesso_formset.is_valid() and anexo_formset.is_valid()):
+            dadosbancarios_formset.is_valid() and  anexo_formset.is_valid()):
             
             loja = form.save(commit=False)
             loja.status = 'P'  # Pré-cadastro
@@ -160,72 +160,56 @@ def pre_cadastro_loja(request):
             dadosbancarios_formset.instance = loja
             dadosbancarios_formset.save()
 
-            acesso_formset.instance = loja
-            acesso_formset.save()
-
             anexo_formset.instance = loja
             anexo_formset.save()
 
-            return redirect('alguma_view_de_sucesso')
-    else:
-        form = LojaForm()
-        socio_formset = SocioLojaFormSet(instance=None, prefix='socios')
-        vendedor_formset = VendedorLojaFormSet(instance=None, prefix='vendedores')
-        dadosbancarios_formset = DadosBancariosFormSet(instance=None, prefix='dadosbancarios')
-        acesso_formset = LojaFinanceiraAcessoFormSet(instance=None, prefix='acessos_financeiras')
-        anexo_formset = LojaAnexoFormSet(instance=None, prefix='anexos')
-    
-    context = {
-        'form': form,
-        'socio_formset': socio_formset,
-        'vendedor_formset': vendedor_formset,
-        'dadosbancarios_formset': dadosbancarios_formset,
-        'acesso_formset': acesso_formset,
-        'anexo_formset': anexo_formset,
-    }
-    return render(request, 'lojas/pre_cadastro.html', context)
+            return redirect('lojas:listar_pre_cadastros')
 
-    if request.method == 'POST':
-        form = LojaForm(request.POST, request.FILES)
-        socio_formset = SocioLojaFormSet(request.POST, request.FILES, instance=None, prefix='socios')
-        vendedor_formset = VendedorLojaFormSet(request.POST, instance=None, prefix='vendedores')
-        dadosbancarios_formset = DadosBancariosFormSet(request.POST, instance=None, prefix='dadosbancarios')
-        acesso_formset = LojaFinanceiraAcessoFormSet(request.POST, instance=None, prefix='acessos_financeiras')
-        
-        if (form.is_valid() and socio_formset.is_valid() and vendedor_formset.is_valid() and
-            dadosbancarios_formset.is_valid() and acesso_formset.is_valid()):
-            
-            loja = form.save(commit=False)
-            loja.status = 'P'
-            loja.operador = request.user.operador  # ou conforme sua lógica
-            loja.save()
-            
-            socio_formset.instance = loja
-            socio_formset.save()
-            
-            vendedor_formset.instance = loja
-            vendedor_formset.save()
-            
-            dadosbancarios_formset.instance = loja
-            dadosbancarios_formset.save()
-            
-            acesso_formset.instance = loja
-            acesso_formset.save()
-            
-            return redirect('alguma_view_de_sucesso')
+        else:
+            # Exibir os erros no console para debug
+            if not form.is_valid():
+                print("\n🚨 Erros no Formulário de Loja 🚨")
+                for field, errors in form.errors.items():
+                    print(f"{field}: {', '.join(errors)}")
+
+            if not socio_formset.is_valid():
+                print("\n🚨 Erros nos Sócios 🚨")
+                for form in socio_formset:
+                    if form.errors:
+                        print(form.errors)
+
+            if not vendedor_formset.is_valid():
+                print("\n🚨 Erros nos Vendedores 🚨")
+                for form in vendedor_formset:
+                    if form.errors:
+                        print(form.errors)
+
+            if not dadosbancarios_formset.is_valid():
+                print("\n🚨 Erros nos Dados Bancários 🚨")
+                for form in dadosbancarios_formset:
+                    if form.errors:
+                        print(form.errors)
+
+            if not anexo_formset.is_valid():
+                print("\n🚨 Erros nos Anexos 🚨")
+                for form in anexo_formset:
+                    if form.errors:
+                        print(form.errors)
+
+
     else:
         form = LojaForm()
         socio_formset = SocioLojaFormSet(instance=None, prefix='socios')
         vendedor_formset = VendedorLojaFormSet(instance=None, prefix='vendedores')
         dadosbancarios_formset = DadosBancariosFormSet(instance=None, prefix='dadosbancarios')
-        acesso_formset = LojaFinanceiraAcessoFormSet(instance=None, prefix='acessos_financeiras')
-    
+        anexo_formset = LojaAnexoFormSet(instance=None, prefix='anexos')
+
     context = {
         'form': form,
         'socio_formset': socio_formset,
         'vendedor_formset': vendedor_formset,
         'dadosbancarios_formset': dadosbancarios_formset,
-        'acesso_formset': acesso_formset,
+        'anexo_formset': anexo_formset,
     }
     return render(request, 'lojas/pre_cadastro.html', context)
 
@@ -233,4 +217,34 @@ def pre_cadastro_loja(request):
 
 def listar_pre_cadastros(request):
     pre_cadastros = Loja.objects.filter(status='P')
-    return render(request, 'lojas/lista_pre_cadastros.html', {'lojas': pre_cadastros})
+    return render(request, 'lojas/listar_pre_cadastros.html', {'lojas': pre_cadastros})
+
+
+@csrf_exempt
+def criar_vendedor(request):
+    if request.method == "POST":
+        nome_vendedor = request.POST.get("nome_vendedor")
+        cpf_vendedor = request.POST.get("cpf_vendedor")
+        celular_vendedor = request.POST.get("celular_vendedor")
+        email_vendedor = request.POST.get("email_vendedor", "")
+        chave_pix = request.POST.get("chave_pix", "")
+        loja_id = request.POST.get("loja")
+
+        if not nome_vendedor or not cpf_vendedor or not celular_vendedor or not loja_id:
+            return JsonResponse({"success": False, "error": "Dados inválidos"})
+
+        try:
+            loja = Loja.objects.get(id=loja_id)
+            vendedor = Vendedor.objects.create(
+                nome_vendedor=nome_vendedor,
+                cpf_vendedor=cpf_vendedor,
+                celular_vendedor=celular_vendedor,
+                email_vendedor=email_vendedor,
+                chave_pix=chave_pix,
+                loja=loja
+            )
+
+            return JsonResponse({"success": True, "vendedor_id": vendedor.id})
+        except Loja.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Loja não encontrada"})
+    return JsonResponse({"success": False, "error": "Método inválido"})

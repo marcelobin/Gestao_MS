@@ -6,196 +6,308 @@ from propostas.models import Proposta
 from datetime import datetime, timedelta
 import calendar
 
-# Criar o Dash App
 app = DjangoDash('PropostaDashboard', external_stylesheets=['/static/css/custom.css'])
 
-# Definir o primeiro e o último dia do mês atual
-hoje = datetime.today()
-primeiro_dia = datetime(hoje.year, hoje.month, 1).strftime('%Y-%m-%d')
-ultimo_dia = datetime(hoje.year, hoje.month, calendar.monthrange(hoje.year, hoje.month)[1]).strftime('%Y-%m-%d')
-
-# Função para carregar os dados do banco
 def carregar_dados():
     propostas = Proposta.objects.all().values(
         'nr_proposta', 'vl_financiado', 'receita', 'operador__nm_operador',
-        'status__ds_status', 'dt_proposta', 'financeira__nome_financeira'
+        'status__ds_status', 'dt_proposta', 'financeira__nome_financeira', 'loja__nm_fantasia'
     )
     df = pd.DataFrame(propostas)
-    
     if df.empty:
         df = pd.DataFrame(columns=[
             'nr_proposta', 'vl_financiado', 'receita', 'operador__nm_operador',
-            'status__ds_status', 'dt_proposta', 'financeira__nome_financeira'
+            'status__ds_status', 'dt_proposta', 'financeira__nome_financeira', 'loja__nm_fantasia'
         ])
-    
+    df["dt_proposta"] = pd.to_datetime(df["dt_proposta"], errors="coerce")
     return df
 
-# Layout do Dashboard com Filtros Interativos
+def formatar_nome(nome):
+    partes = nome.split()
+    if len(partes) > 1:
+        return f"{partes[0]} {partes[-1]}"
+    return nome
+
 app.layout = html.Div([
-    # Filtros
+    # ------------------------------------------------------------
+    # Filtros (todos em uma única linha)
+    # ------------------------------------------------------------
     html.Div([
         html.Div([
-            html.Label("Selecione um Período:"),
+            html.Label("Período:"),
             dcc.DatePickerRange(
                 id='filtro-data',
                 display_format="DD/MM/YYYY",
-                start_date=primeiro_dia,
-                end_date=ultimo_dia,
-                style={"font-size": "6px"}
+                start_date=datetime.today().replace(day=1).strftime('%Y-%m-%d'),
+                end_date=datetime.today().strftime('%Y-%m-%d'),
+                style={"font-size": "14px"}
             )
-        ], className="col-md-3"),  # Tamanho da fonte do filtro de data
+        ], className="col-md-3"),
 
         html.Div([
-            html.Label("Selecione um Operador:"),
+            html.Label("Operador:"),
             dcc.Dropdown(
                 id='filtro-operador',
-                options=[],  # Será preenchido dinamicamente
+                options=[],
                 placeholder="Todos os Operadores",
                 multi=True
             )
-        ], className="col-md-3"),
+        ], className="col-md-2"),
 
         html.Div([
-            html.Label("Selecione uma Financeira:"),
+            html.Label("Loja:"),
+            dcc.Dropdown(
+                id='filtro-loja',
+                options=[],
+                placeholder="Todas as Lojas",
+                multi=True
+            )
+        ], className="col-md-2"),
+
+        html.Div([
+            html.Label("Financeira:"),
             dcc.Dropdown(
                 id='filtro-financeira',
-                options=[],  # Será preenchido dinamicamente
+                options=[],
                 placeholder="Todas as Financeiras",
                 multi=True
             )
-        ], className="col-md-3"),
+        ], className="col-md-2"),
 
         html.Div([
-            html.Label("Selecione um Status:"),
+            html.Label("Status:"),
             dcc.Dropdown(
                 id='filtro-status',
-                options=[],  # Será preenchido dinamicamente
+                options=[],
                 placeholder="Todos os Status",
                 multi=True
             )
-        ], className="col-md-3"),
-    ], className="row mb-3", style={"justify-content": "space-around"}),
+        ], className="col-md-2"),
+    ], className="row mb-3"),
 
-    # Indicadores principais
+    # ------------------------------------------------------------
+    # KPIs (uma linha, 4 colunas)
+    # ------------------------------------------------------------
     html.Div([
+        # Produção Total (Paga)
         html.Div([
             html.P("Produção Total"),
-            html.H3(id="total-producao", style={"font-size": "2rem", "color": "#0B2559"}),
-        ], className="card-dash col-md-4 text-center"),
-        
-        html.Div([
-            html.P("Total de Propostas"),
-            html.H3(id="total-propostas", style={"font-size": "2rem", "color": "#0B2559"}),
-        ], className="card-dash col-md-4 text-center"),
+            html.H3(id="total-producao", style={"color": "#0B2559"})
+        ], className="card-dash p-3 col-md-3"),
 
+        # Total de Propostas Pagas
         html.Div([
-            html.P("Projeção de Receita"),
-            html.H3(id="projecao-receita", style={"font-size": "2rem", "color": "#0B2559"}),
-        ], className="card-dash col-md-4 text-center"),
-    ], className="row mb-4", style={"justify-content": "space-between"}),
+            html.P("Total de Propostas Pagas"),
+            html.H3(id="total-propostas", style={"color": "#0B2559"})
+        ], className="card-dash p-3 col-md-3"),
 
-    # Gráficos - Produção por Operador e Produção por Financeira
+        # Receita Prevista (Paga)
+        html.Div([
+            html.P("Receita Prevista"),
+            html.H3(id="projecao-receita", style={"color": "#0B2559"})
+        ], className="card-dash p-3 col-md-3"),
+
+        # Valor Médio Financiado (Paga)
+        html.Div([
+            html.P("Valor Médio Financiado"),
+            html.H3(id="valor-medio", style={"color": "#0B2559"})
+        ], className="card-dash p-3 col-md-3"),
+    ], className="row mb-4"),
+
+    # ------------------------------------------------------------
+    # Gráficos de barras (Operador / Loja) - mesma linha
+    # ------------------------------------------------------------
     html.Div([
         html.Div([
-            dcc.Graph(id="grafico-operador")
-        ], className="card-dash col-md-6"),
-
+            dcc.Graph(id="grafico-operador", animate=True)
+        ], className="col-md-6"),
         html.Div([
-            dcc.Graph(id="grafico-financeira")
-        ], className="card-dash col-md-6"),
-    ], className="row mt-4", style={"justify-content": "space-between"}),
+            dcc.Graph(id="grafico-loja", animate=True)
+        ], className="col-md-6"),
+    ], className="row mb-4"),
 
+    # ------------------------------------------------------------
+    # Gráfico de Tendência (linha) - abaixo, largura total
+    # ------------------------------------------------------------
+    html.Div([
+        dcc.Graph(id="grafico-tempo", animate=True)
+    ], className="col-md-12"),
 ])
 
-# Callback para Atualizar os Opções dos Filtros
 @app.callback(
-    [Output('filtro-operador', 'options'),
-     Output('filtro-financeira', 'options'),
-     Output('filtro-status', 'options')],
+    [
+        Output('filtro-operador', 'options'),
+        Output('filtro-financeira', 'options'),
+        Output('filtro-loja', 'options'),
+        Output('filtro-status', 'options')
+    ],
     Input('filtro-data', 'start_date')
 )
 def atualizar_opcoes_filtros(start_date):
     df = carregar_dados()
-
-    return [
-        [{'label': op, 'value': op} for op in df['operador__nm_operador'].unique()],
-        [{'label': fin, 'value': fin} for fin in df['financeira__nome_financeira'].unique()],
-        [{'label': st, 'value': st} for st in df['status__ds_status'].unique()]
+    opcoes_operador = [
+        {'label': op, 'value': op}
+        for op in sorted(df['operador__nm_operador'].dropna().unique())
     ]
+    opcoes_financeira = [
+        {'label': fin, 'value': fin}
+        for fin in sorted(df['financeira__nome_financeira'].dropna().unique())
+    ]
+    opcoes_loja = [
+        {'label': loja, 'value': loja}
+        for loja in sorted(df['loja__nm_fantasia'].dropna().unique())
+    ]
+    opcoes_status = [
+        {'label': st, 'value': st}
+        for st in sorted(df['status__ds_status'].dropna().unique())
+    ]
+    return opcoes_operador, opcoes_financeira, opcoes_loja, opcoes_status
 
-# Callback para atualizar os dados e gráficos dinamicamente
 @app.callback(
-    [Output("total-producao", "children"),
-     Output("total-propostas", "children"),
-     Output("projecao-receita", "children"),
-     Output("grafico-operador", "figure"),
-     Output("grafico-financeira", "figure"),
-],
-    [Input("filtro-data", "start_date"),
-     Input("filtro-data", "end_date"),
-     Input("filtro-operador", "value"),
-     Input("filtro-financeira", "value"),
-     Input("filtro-status", "value")]
+    [
+        Output("total-producao", "children"),
+        Output("total-propostas", "children"),
+        Output("projecao-receita", "children"),
+        Output("valor-medio", "children"),
+        Output("grafico-operador", "figure"),
+        Output("grafico-loja", "figure"),
+        Output("grafico-tempo", "figure"),
+    ],
+    [
+        Input("filtro-data", "start_date"),
+        Input("filtro-data", "end_date"),
+        Input("filtro-operador", "value"),
+        Input("filtro-financeira", "value"),
+        Input("filtro-loja", "value"),
+        Input("filtro-status", "value"),
+    ]
 )
-def atualizar_graficos(start_date, end_date, operadores, financeiras, status):
-    df = carregar_dados()
+def atualizar_dashboard(start_date, end_date, operadores, financeiras, lojas, status):
+    # Carrega dados
+    df_full = carregar_dados()
 
-    # Filtrar por Data
-    df["dt_proposta"] = pd.to_datetime(df["dt_proposta"])
-    # Criar uma nova coluna com o formato "Mês/Ano"
-    df["mes_ano"] = df["dt_proposta"].dt.strftime('%Y-%m')
-    df = df[(df["dt_proposta"] >= pd.to_datetime(start_date)) & (df["dt_proposta"] <= pd.to_datetime(end_date))]
-
-    # Aplicar Filtros
+    # Filtros
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+    df_filtro = df_full[
+        (df_full["dt_proposta"] >= start_date) &
+        (df_full["dt_proposta"] <= end_date)
+    ]
     if operadores:
-        df = df[df["operador__nm_operador"].isin(operadores)]
+        df_filtro = df_filtro[df_filtro["operador__nm_operador"].isin(operadores)]
     if financeiras:
-        df = df[df["financeira__nome_financeira"].isin(financeiras)]
+        df_filtro = df_filtro[df_filtro["financeira__nome_financeira"].isin(financeiras)]
+    if lojas:
+        df_filtro = df_filtro[df_filtro["loja__nm_fantasia"].isin(lojas)]
     if status:
-        df = df[df["status__ds_status"].isin(status)]
+        df_filtro = df_filtro[df_filtro["status__ds_status"].isin(status)]
 
-    # Atualizar Indicadores
-    total_producao = f"R$ {df['vl_financiado'].sum():,.2f}"
-    total_propostas = f"{len(df)}"
-    projecao_receita = f"R$ {df['receita'].sum():,.2f}"
+    # Considerar apenas as propostas com status Paga
+    df_paga = df_filtro[df_filtro["status__ds_status"].str.lower() == "paga"]
 
-    # Gráfico de Produção por Operador (Ordenado do maior para o menor)
-    df_operador = df.groupby('operador__nm_operador')['vl_financiado'].sum().reset_index()
-    df_operador = df_operador.sort_values(by="vl_financiado", ascending=True)
+    # KPIs
+    total_producao_val = df_paga['vl_financiado'].sum()
+    receita_total_val = df_paga['receita'].sum()
+    total_propostas_pagas_val = len(df_paga)
+    valor_medio_val = (
+        total_producao_val / total_propostas_pagas_val
+        if total_propostas_pagas_val > 0 else 0
+    )
+
+    total_producao = f"R$ {total_producao_val:,.2f}"
+    total_propostas = f"{total_propostas_pagas_val}"
+    projecao_receita = f"R$ {receita_total_val:,.2f}"
+    valor_medio = f"R$ {valor_medio_val:,.2f}"
+
+    # Gráfico de Produção por Operador
+    df_operador = df_paga.groupby('operador__nm_operador')['vl_financiado'].sum().reset_index()
+    df_operador.rename(columns={"operador__nm_operador": "Operador", "vl_financiado": "Valor Financiado"}, inplace=True)
+    if df_operador.empty:
+        df_operador = pd.DataFrame({"Operador": ["Sem Dados"], "Valor Financiado": [0]})
+    df_operador["Operador"] = df_operador["Operador"].apply(formatar_nome)
 
     fig_operador = px.bar(
         df_operador,
-        y='operador__nm_operador',
-        x='vl_financiado',
-        title="Produção por Operador",
-        labels={
-            'operador__nm_operador': 'Operador',  # Título do eixo X
-            'vl_financiado': 'Valor Financiado R$'},
-        text_auto=True
+        x="Valor Financiado",
+        y="Operador",
+        orientation="h",
+        title="Produção por Operador (Paga)",
+        text="Valor Financiado",
+        labels={"Valor Financiado": "Valor Financiado (R$)", "Operador": "Operador"}
     )
-    # Personalizações
-    fig_operador.update_traces(
-        texttemplate='%{x:,.2f}',  # Define os rótulos com duas casas decimais, sem abreviação
-        textposition='inside'    # Garante que os rótulos fiquem fora das barras
-    )
-    
-    # Remove os valores do eixo Y (mantendo apenas os rótulos dentro das barras)
+    fig_operador.update_traces(texttemplate='%{x:,.2f}', textposition='inside')
     fig_operador.update_layout(
-        xaxis=dict(showticklabels=False),  # Esconde os valores do eixo Y
-        yaxis_title="Operador",
-        xaxis_title="",  # Remove o título do eixo Y
-        plot_bgcolor='rgba(0,0,0,0)',  # Remove o fundo do gráfico
-        paper_bgcolor='rgba(0,0,0,0)'   # Remove o fundo da área externa do gráfico        
+        yaxis={'categoryorder': 'total ascending'},
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        transition=dict(
+            duration=500,   # milissegundos
+            easing="cubic-in-out")        
     )
 
-    # Gráfico de Produção por Financeira
-    fig_financeira = px.pie(
-        df.groupby('financeira__nome_financeira')['vl_financiado'].sum().reset_index(),
-        names='financeira__nome_financeira',
-        values='vl_financiado',
-        title="Produção por Financeira",
-        hole=0.4
+    # Gráfico de Produção por Loja
+    df_loja = df_paga.groupby('loja__nm_fantasia')['vl_financiado'].sum().reset_index()
+    df_loja.rename(columns={"loja__nm_fantasia": "Loja", "vl_financiado": "Valor Financiado"}, inplace=True)
+    if df_loja.empty:
+        df_loja = pd.DataFrame({"Loja": ["Sem Dados"], "Valor Financiado": [0]})
+
+    fig_loja = px.bar(
+        df_loja,
+        x="Valor Financiado",
+        y="Loja",
+        orientation="h",
+        title="Produção por Loja (Paga)",
+        text="Valor Financiado",
+        labels={"Valor Financiado": "Valor Financiado (R$)", "Loja": "Loja"}
+    )
+    fig_loja.update_traces(texttemplate='%{x:,.2f}', textposition='inside')
+    fig_loja.update_layout(
+        yaxis={'categoryorder': 'total ascending'},
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        transition=dict(
+            duration=500,   # milissegundos
+            easing="cubic-in-out")            
     )
 
+    # Gráfico de Tendência (últimos 12 meses, Paga)
+    hoje = datetime.today()
+    doze_meses_atras = hoje.replace(day=1) - timedelta(days=365)
+    df_paga_12m = df_paga[df_paga["dt_proposta"] >= doze_meses_atras]
 
-    return total_producao, total_propostas, projecao_receita, fig_operador, fig_financeira
+    df_paga_12m["mes_ano_label"] = df_paga_12m["dt_proposta"].dt.strftime('%m/%Y')
+    df_paga_12m["ano_mes"] = df_paga_12m["dt_proposta"].dt.strftime('%Y-%m')
+
+    df_time_grouped = (
+        df_paga_12m
+        .groupby(["ano_mes","mes_ano_label"])["vl_financiado"]
+        .sum()
+        .reset_index()
+        .sort_values("ano_mes")
+    )
+
+    fig_tempo = px.line(
+        df_time_grouped,
+        x="mes_ano_label",
+        y="vl_financiado",
+        title="Tendência de Produção (Últimos 12 meses, Paga)",
+        markers=True,
+        labels={"mes_ano_label": "Mês/Ano", "vl_financiado": "Valor Financiado (R$)"}
+    )
+    fig_tempo.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        transition=dict(
+            duration=500,   # milissegundos
+            easing="cubic-in-out")
+    )
+
+    return (
+        total_producao,
+        total_propostas,
+        projecao_receita,
+        valor_medio,
+        fig_operador,
+        fig_loja,
+        fig_tempo
+    )

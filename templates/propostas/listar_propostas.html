@@ -10,10 +10,10 @@
           <h5 style="color:gray; font-weight:bolder; top:0;"> Lista de Propostas </h5>
           <hr>
             <div class="mb-3" style="margin-top: 2px;">
-                <h6 class="card-title d-inline-block" style="color:gray; font-weight:bolder; padding-bottom:10px;">
-                    Filtros
+              <h6 class="card-title d-inline-block" style="color:gray; cursor: pointer; font-weight:bolder;" data-bs-toggle="collapse" data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
+                Filtros +
                 </h6>
-                <div>
+                <div class="collapse" id="filtrosCollapse">
                     <div class="mb-3">
                         <form method="get" id="filterForm">
                             <div class="row g-3">
@@ -83,6 +83,14 @@
                                     <input type="date" name="dt_pagamento_fim" id="filtro_dt_pagamento_fim" class="form-control" value="{{ request.GET.dt_pagamento_fim }}">
                                     <label for="filtro_dt_pagamento_fim" style="margin-top:10px">Data de Pagamento (Fim)</label>
                                 </div>
+                                <div class="col-md-3 form-floating">
+                                  <input type="text" name="search_cliente" id="filtro_search_cliente" class="form-control" 
+                                         placeholder="CPF ou Nome do Cliente" value="{{ request.GET.search_cliente }}">
+                                  <label for="filtro_search_cliente">CPF ou Nome do Cliente</label>
+                                </div>
+                            </div>
+                              
+                              
                                 <div class="col-md-3">
                                     <div class="wrapper">
                                         <!-- Botão de Filtrar -->

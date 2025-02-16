@@ -1,14 +1,17 @@
+<!--criar_editar_loja.html-->
+
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
 {% block content %}
 
-<div class="container my-4" id="main-content">
+<!--<div class="container my-4" id="main-content">-->
   <!-- Título da Página -->
   <div class="d-flex align-items-center mb-4 titulo-container">
-    <i class="fas fa-file-alt titulo-icone"></i>
-    <h4 class="titulo-texto">Dados da Loja</h4>
+    <h5 class="titulo-texto">Dados da Loja</h5>
   </div>
+  <hr>
+
 
   <!-- Formulário -->
   <form method="post" class="row g-1" enctype="multipart/form-data">
@@ -164,7 +167,11 @@
           </div>
           {% endfor %}
         </div>
-        <button type="button" class="btn btn-secondary btn-sm" id="add-socio">Adicionar Sócio</button>
+        <div class="d-flex justify-content-start" style="vertical-align: middle;">
+          <button type="button" class="btn btn-add" id="add-socio">
+            <i class="fa-solid fa-circle-plus"> </i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -225,7 +232,11 @@
           </div>
           {% endfor %}
         </div>
-        <button type="button" class="btn btn-secondary btn-sm" id="add-vendedor">Adicionar Vendedor</button>
+        <div class="d-flex justify-content-start">
+          <button type="button" class="btn btn-add" id="add-vendedor">
+            <i class="fa-solid fa-circle-plus"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -279,7 +290,11 @@
           </div>
           {% endfor %}
         </div>
-        <button type="button" class="btn btn-secondary btn-sm" id="add-dadosbanc">Adicionar Dados Bancários</button>
+        <div class="d-flex justify-content-start">
+          <button type="button" class="btn btn-add" id="add-dadosbanc">
+            <i class="fa-solid fa-circle-plus"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -332,7 +347,11 @@
           </div>
           {% endfor %}
         </div>
-        <button type="button" class="btn btn-secondary btn-sm" id="add-acesso">Adicionar Acesso</button>
+        <div class="d-flex justify-content-start">
+          <button type="button" class="btn btn-add" id="add-acesso">
+            <i class="fa-solid fa-circle-plus"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -341,7 +360,7 @@
       <button type="submit" class="btn btn-primary">Salvar</button>
     </div>
   </form>
-</div>
+<!--</div>-->
 
 <!-- jQuery, jQuery Mask e Select2 -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -410,7 +429,42 @@
     $('#add-acesso').on('click', function () {
       addForm('acessos-container', 'id_acessos_financeiras-TOTAL_FORMS', 'empty-acesso-form');
     });
+
+    // =========================================================================
+    //                        CONSULTA CEP / AUTOPREENCHIMENTO
+    // =========================================================================
+    $(document).on('blur', '#id_cep', function() {
+      console.log(`[CEP] Blur event: ${this.id}`);
+    
+      const idEndereco = '#id_endereco';
+      const idBairro   = '#id_bairro';
+      const idCidade   = '#id_cidade';
+      const idUf       = '#id_uf';
+    
+      const cep = $(this).val().replace(/\D/g, '');
+      if (cep.length === 8) {
+        console.log(`[CEP] Buscando CEP: ${cep}`);
+        $.getJSON(`https://viacep.com.br/ws/${cep}/json/`, function(data) {
+          if (!data.erro) {
+            console.log(`[CEP] CEP ${cep} carregado com sucesso.`);
+            $(idEndereco).val(data.logradouro || '');
+            $(idBairro).val(data.bairro || '');
+            $(idCidade).val(data.localidade || '');
+            $(idUf).val(data.uf || '');
+          } else {
+            console.warn(`[CEP] CEP ${cep} não encontrado.`);
+            alert('CEP não encontrado.');
+          }
+        }).fail(function(textStatus, errorThrown) {
+          console.error(`[CEP] Erro ao buscar informações do CEP ${cep}:`, textStatus, errorThrown);
+          alert('Erro ao buscar informações do CEP.');
+        });
+      }
+    });
+    
+
   });
 </script>
+
 
 {% endblock %}

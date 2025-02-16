@@ -88,9 +88,14 @@
         </li>
         <li class="nav-item mb-2">
           <a class="nav-link text-white d-flex align-items-center" href="{% url 'dashboard:dashboard' %}">
-            <i class="ri-dashboard-3-line me-2"></i> Dashboards
+            <i class="fa-solid fa-chart-simple"></i> Dashboards
           </a>
         </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link text-white d-flex align-items-center" href="{% url 'lojas:pre_cadastro_loja' %}">
+            <i class="fa-solid fa-pen-to-square"></i> Cadastrar Loja
+          </a>
+        </li>        
         <li class="nav-item mb-2">
           <a class="nav-link text-white d-flex align-items-center" href="#">
             <i class="ri-question-line me-2"></i> Ajuda
@@ -99,7 +104,7 @@
         <h6 style="font-weight:bold; color:cadetblue; text-align: center; padding-top:5px">Gestão</h6>
         <li class="nav-item mb-2">
           <a class="nav-link text-white d-flex align-items-center" href="{% url 'usuarios:lista_usuarios' %}">
-            <i class="ri-user-settings-line me-2"></i> Gestão de Usuários
+            <i class="fa-solid fa-users-gear"></i> Gestão de Usuários
           </a>
         </li>
         <li class="nav-item mb-2">
@@ -109,12 +114,17 @@
         </li>
         <li class="nav-item mb-2">
           <a class="nav-link text-white d-flex align-items-center" href="{% url 'financeiras:financeira_list' %}">
-            <i class="ri-money-dollar-circle-line me-2"></i> Gestão de Financeiras
+            <i class="fa-solid fa-landmark"></i> Gestão de Financeiras
           </a>
         </li>
         <li class="nav-item mb-2">
           <a class="nav-link text-white d-flex align-items-center" href="{% url 'propostas:lojas_elegiveis' %}">
-            <i class="ri-money-dollar-circle-line me-2"></i> Pagamentos Retorno
+            <i class="fa-solid fa-brazilian-real-sign"></i> Pagamentos Retorno
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link text-white d-flex align-items-center" href="{% url 'propostas:lojas_elegiveis' %}">
+            <i class="fa-regular fa-money-bill-1"></i> Pagamentos Incentivos
           </a>
         </li>
       </ul>
