@@ -358,6 +358,53 @@
         </div>
       </div>
     </div>
+        <!-- ========== DOCUMENTOS / ANEXOS ========== -->
+        <div class="card formulario-card mt-3">
+          <div class="card-header">
+              <i class="material-icons me-2">attach_file</i> Documentos / Anexos
+          </div>
+          <div class="card-body">
+              {{ anexo_formset.management_form }}
+              <div class="anexo-form row g-1 mb-2" style="display:none;" id="empty-anexo-form">
+                  {{ anexo_formset.empty_form.id }}
+                  <div class="col-md-4 form-floating">
+                      {% render_field anexo_formset.empty_form.tipo_documento class="form-control" placeholder="Tipo de Documento" %}
+                      <label for="{{ anexo_formset.empty_form.tipo_documento.id_for_label }}">Tipo de Documento</label>
+                  </div>
+                  <div class="col-md-7 form-floating">
+                      {% render_field anexo_formset.empty_form.arquivo class="form-control" placeholder="Arquivo" %}
+                      <label for="{{ anexo_formset.empty_form.arquivo.id_for_label }}">Arquivo</label>
+                  </div>
+                  <div class="col-md-1">
+                      {{ anexo_formset.empty_form.DELETE }}
+                  </div>
+              </div>
+  
+              <div id="anexos-container">
+                  {% for form in anexo_formset %}
+                  <div class="anexo-form row g-1 mb-2">
+                      {{ form.id }}
+                      <div class="col-md-4 form-floating">
+                          {% render_field form.tipo_documento class="form-control" placeholder="Tipo de Documento" %}
+                          <label for="{{ form.tipo_documento.id_for_label }}">Tipo de Documento</label>
+                      </div>
+                      <div class="col-md-7 form-floating">
+                          {% render_field form.arquivo class="form-control" placeholder="Arquivo" %}
+                          <label for="{{ form.arquivo.id_for_label }}">Arquivo</label>
+                      </div>
+                      <div class="col-md-1">
+                          {{ form.DELETE }} Excluir
+                      </div>
+                  </div>
+                  {% endfor %}
+              </div>
+              <div class="d-flex justify-content-start">
+                  <button type="button" class="btn btn-add" id="add-anexo">
+                      <i class="fa-solid fa-circle-plus"></i>
+                  </button>
+              </div>
+          </div>
+      </div>    
 
     <!-- BOTÃO DE SALVAR -->
     <div class="col-12 mt-3">
@@ -433,6 +480,9 @@
     $('#add-acesso').on('click', function () {
       addForm('acessos-container', 'id_acessos_financeiras-TOTAL_FORMS', 'empty-acesso-form');
     });
+    $('#add-anexo').off('click').on('click', function () {
+      addForm('anexos-container', 'id_anexos-TOTAL_FORMS', 'empty-anexo-form');
+    });    
 
     // =========================================================================
     //                        CONSULTA CEP / AUTOPREENCHIMENTO

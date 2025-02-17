@@ -1,7 +1,13 @@
 # lojas/models.py
-
+import os
 from django.db import models
 from usuarios.models import Operador, Filial
+from django.utils.text import slugify
+from PIL import Image
+from PyPDF2 import PdfMerger
+from io import BytesIO
+from django.core.files.base import ContentFile
+
 
 class Loja(models.Model):
     nr_cnpj = models.CharField("CNPJ", max_length=20, unique=True)
@@ -26,7 +32,7 @@ class Loja(models.Model):
         ('I', 'Inativa'),
         ('B', 'Bloqueada'),
     )
-    status = models.CharField("Status", max_length=1, choices=STATUS_CHOICES, default='P')    
+    status = models.CharField("Status", max_length=1, choices=STATUS_CHOICES, default='P', blank=True)    
 
 
     def __str__(self):
@@ -88,7 +94,10 @@ class LojaFinanceiraAcesso(models.Model):
         return f"{self.loja.nm_fantasia} - {self.financeira.nome_financeira}: {self.codigo_acesso}"
 
 
-TIPO_DOCUMENTO_CHOICES = (
+class LojaAnexo(models.Model):
+    loja = models.ForeignKey('Loja', on_delete=models.CASCADE, related_name="anexos")
+    arquivo = models.FileField(blank=True, null=True)
+    TIPO_DOCUMENTO_CHOICES = (
     ('CNPJ', 'CNPJ'),
     ('CONTRATO', 'Contrato Social'),
     ('IDENTIFICACAO', 'Identificação dos Sócios'),
@@ -97,12 +106,26 @@ TIPO_DOCUMENTO_CHOICES = (
     ('CERTIFICADOS', 'Certificados'),
     ('DECLARACOES', 'Declarações'),
     ('FOTOS', 'Fotos'),
-)
+    ('OUTROS', 'Outros'),
+    )
+    tipo_documento = models.CharField("Tipo de Documento", max_length=20, choices=TIPO_DOCUMENTO_CHOICES)
 
-class LojaAnexo(models.Model):
-    loja = models.ForeignKey('Loja', on_delete=models.CASCADE, related_name="anexos")
-    tipo_documento = models.CharField("Tipo de Documento", max_length=50, choices=TIPO_DOCUMENTO_CHOICES)
-    arquivo = models.FileField("Arquivo", upload_to='lojas/anexos/')
+    def save(self, *args, **kwargs):
+        if self.arquivo:
+            ext = os.path.splitext(self.arquivo.name)[-1].lower()
+            pasta_loja = slugify(self.loja.nm_fantasia)  # ex: "loja-super"
+            nome_formatado = f"{slugify(self.loja.nm_fantasia)}_{slugify(self.tipo_documento.upper())}{ext}"
+            caminho_completo = f"anexos/{pasta_loja}/{nome_formatado}"
+           
+            self.arquivo.name = caminho_completo
 
-    def __str__(self):
-        return f"{self.loja.nm_fantasia} - {self.get_tipo_documento_display()}"
+            # Converter JPG para PDF
+            if ext in ['.jpg', '.jpeg', '.png']:
+                image = Image.open(self.arquivo)
+                pdf_buffer = BytesIO()
+                image.convert('RGB').save(pdf_buffer, format='PDF')
+                pdf_buffer.seek(0)
+                self.arquivo.save(caminho_completo.replace(ext, '.pdf'), ContentFile(pdf_buffer.read()), save=False)
+
+        super().save(*args, **kwargs)
+        

@@ -132,9 +132,6 @@
                             </th>
                             <th class="sortable" data-sort-type="date">Dt Proposta</th>
                             <th class="sortable" data-sort-type="date">Dt Pagamento</th>
-                            <th class="sortable" data-sort-type="number" style="text-align:center;">
-                              Comissão
-                          </th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -163,7 +160,6 @@
                             </td>
                             <td>{{ proposta.dt_proposta|date:"d/m/Y" }}</td>
                             <td>{{ proposta.dt_pagamento|date:"d/m/Y"|default_if_none:"" }}</td>
-                            <td>{{ proposta.receita}}</td>
                             <td>
                                 <a href="{% url 'propostas:detalhe_proposta' proposta.id %}" class="btn btn-sm" title="Ver detalhes">
                                     <i class="ri-eye-line"></i>

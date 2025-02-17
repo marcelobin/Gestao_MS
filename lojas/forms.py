@@ -36,6 +36,51 @@ class LojaForm(forms.ModelForm):
                 raise forms.ValidationError("A data deve estar no formato dd/mm/aaaa.")
         raise forms.ValidationError("Data inválida.")
 
+class LojaFormPreCadastro(forms.ModelForm):
+    class Meta:
+        model = Loja
+
+        fields = [
+            'nr_cnpj', 'razao_social', 'nm_fantasia', 'dt_constituicao', 'cep', 'endereco',
+            'nro', 'complemento', 'bairro', 'cidade', 'uf', 'fone_fixo', 'celular', 'email',
+            'operador', 'filial', 'status'
+        ]
+        widgets = {
+            'dt_constituicao': forms.DateInput(attrs={'type': 'text', 'placeholder': 'dd/mm/aaaa'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Força o campo "status" a mostrar somente "P"
+        self.fields['status'].choices = [('P', 'Pré-Cadastro')]
+        self.fields['status'].initial = 'P'
+
+        # Se quiser que o usuário não possa mexer:
+        # self.fields['status'].widget.attrs['readonly'] = True
+        # ou
+        # self.fields['status'].widget.attrs['disabled'] = True
+
+    def clean_dt_constituicao(self):
+        data = self.cleaned_data.get('dt_constituicao')
+        if isinstance(data, date):
+            return data
+        if isinstance(data, str):
+            try:
+                return datetime.strptime(data, '%d/%m/%Y').date()
+            except ValueError:
+                raise forms.ValidationError("A data deve estar no formato dd/mm/aaaa.")
+        raise forms.ValidationError("Data inválida.")
+
+    def save(self, commit=True):
+        """Força status = 'P' no momento de salvar."""
+        loja = super().save(commit=False)
+        loja.status = 'P'  # Garante que fique P no banco
+        if commit:
+            loja.save()
+        return loja
+
+
 class SocioForm(forms.ModelForm):
     class Meta:
         model = Socio

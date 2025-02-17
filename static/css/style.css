@@ -358,7 +358,7 @@
     border: none; /* Remove a borda padrão */
     border-bottom: 1px solid var(--input-border-color);
     border-radius: 0;
-    font-size: 0.9rem;
+    font-size: 1rem;
     position: relative; /* Necessário para o posicionamento do pseudo-elemento */
     background-color: transparent;
     color: var(--text-color);
@@ -473,7 +473,7 @@
     width: 100%;
     padding: 5px !important;
     border-collapse: collapse;
-    font-size: smaller;
+    font-size: 1rem;
     color: var(--text-color) !important;
     background-color: var(--background-color) !important;
     margin-bottom: 0 !important;

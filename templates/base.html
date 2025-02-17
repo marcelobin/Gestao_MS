@@ -102,6 +102,8 @@
           </a>
         </li>
         <h6 style="font-weight:bold; color:cadetblue; text-align: center; padding-top:5px">Gestão</h6>
+        {% if user.is_superuser %}
+
         <li class="nav-item mb-2">
           <a class="nav-link text-white d-flex align-items-center" href="{% url 'configuracao:index' %}">
             <i class="ri-settings-3-line me-2"></i> Configurações
@@ -112,11 +114,14 @@
             <i class="fa-solid fa-users-gear"></i> Gestão de Usuários
           </a>
         </li>
+        {% endif %}
         <li class="nav-item mb-2">
           <a class="nav-link text-white d-flex align-items-center" href="{% url 'lojas:listar_lojas' %}">
             <i class="ri-store-2-line me-2"></i> Gestão de Lojas
           </a>
         </li>
+        {% if user.is_superuser %}
+
         <li class="nav-item mb-2">
           <a class="nav-link text-white d-flex align-items-center" href="{% url 'financeiras:financeira_list' %}">
             <i class="fa-solid fa-landmark"></i> Gestão de Financeiras
@@ -132,6 +137,7 @@
             <i class="fa-regular fa-money-bill-1"></i> Pagamentos Incentivos
           </a>
         </li>
+        {% endif %}
       </ul>
     </div>
   </div>

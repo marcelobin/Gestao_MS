@@ -1,104 +1,287 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
+
 {% block content %}
 
+<!--<div class="container my-4" id="main-content">-->
+  <!-- Título da Página -->
+  <div class="d-flex align-items-center mb-4 titulo-container">
+    <h5 class="titulo-texto">Dados da Loja</h5>
+  </div>
+  <hr>
 
-
-<div class="card">
-    
-    <div class="card-body">
-        <h5 class="card-title titulo-secao">Ficha Cadastral de {{ loja.nm_fantasia }}</h5>
-        <hr>
+  <!-- ========== DADOS DA LOJA ========== -->
+  <div class="card formulario-card mb-4">
+    <div class="card-header">
+      <i class="fas fa-building me-2"></i> Dados da Loja
     </div>
-
     <div class="card-body">
-        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Dados Cadastrais</h5>
-        <div class="row g-1 mb-2">
-            <div class="col-md-2"><strong>CNPJ:</strong> {{ loja.nr_cnpj }}</div>
-            <div class="col-md-4"><strong>Data de Constituição:</strong> {{ loja.dt_constituicao|date:"d/m/Y" }}</div>
+      <div class="row g-1 mb-2">
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{{ loja.nr_cnpj }}" readonly>
+          <label>CNPJ</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{{ loja.dt_constituicao|date:'d/m/Y' }}" readonly>
+          <label>Data de Constituição</label>
+        </div>
+        <div class="col-md-4 form-floating">
+          <input class="form-control" type="text" value="{{ loja.razao_social }}" readonly>
+          <label>Razão Social</label>
+        </div>
+        <div class="col-md-4 form-floating">
+          <input class="form-control" type="text" value="{{ loja.nm_fantasia }}" readonly>
+          <label>Nome Fantasia</label>
+        </div>
+      </div>
 
+      <div class="row g-1 mb-2">
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{{ loja.cep }}" readonly>
+          <label>CEP</label>
         </div>
-        <div class="row g-1 mb-2">
-            <div class="col-md-4"><strong>Razão Social:</strong> {{ loja.razao_social }}</div>
-            <div class="col-md-4"><strong>Nome Fantasia:</strong> {{ loja.nm_fantasia }}</div>
+        <div class="col-md-3 form-floating">
+          <input class="form-control" type="text" value="{{ loja.endereco }}" readonly>
+          <label>Endereço</label>
         </div>
-        <div class="row g-1 mb-2">
-            <div class="col-md-2"><strong>CEP:</strong> {{ loja.cep }}</div>
-            <div class="col-md-3"><strong>Endereço:</strong> {{ loja.endereco }}</div>
-            <div class="col-md-1"><strong>Número:</strong> {{ loja.nro }}</div>
-            <div class="col-md-2"><strong>Complemento:</strong> {{ loja.complemento|default_if_none:"" }}</div>
-            <div class="col-md-2"><strong>Bairro:</strong> {{ loja.bairro }}</div>
+        <div class="col-md-1 form-floating">
+          <input class="form-control" type="text" value="{{ loja.nro }}" readonly>
+          <label>Nº</label>
         </div>
-        <div class="row g-1 mb-2">
-            <div class="col-md-2"><strong>Cidade:</strong> {{ loja.cidade }}</div>
-            <div class="col-md-1"><strong>UF:</strong> {{ loja.uf }}</div>
-            <div class="col-md-2"><strong>Telefone Fixo:</strong> {{ loja.fone_fixo }}</div>
-            <div class="col-md-2"><strong>Celular:</strong> {{ loja.celular }}</div>
-            <div class="col-md-3"><strong>Email:</strong> {{ loja.email }}</div>
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{{ loja.complemento|default_if_none:'' }}" readonly>
+          <label>Complemento</label>
         </div>
-        <div class="row g-1 mb-2">
-            <div class="col-md-3"><strong>Operador:</strong> {{ loja.operador }}</div>
-            <div class="col-md-2"><strong>Filial:</strong> {{ loja.filial }}</div>
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{{ loja.bairro }}" readonly>
+          <label>Bairro</label>
         </div>
+      </div>
+
+      <div class="row g-1 mb-2">
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{{ loja.cidade }}" readonly>
+          <label>Cidade</label>
+        </div>
+        <div class="col-md-1 form-floating">
+          <input class="form-control" type="text" value="{{ loja.uf }}" readonly>
+          <label>UF</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{{ loja.fone_fixo }}" readonly>
+          <label>Telefone Fixo</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{{ loja.celular }}" readonly>
+          <label>Celular</label>
+        </div>
+        <div class="col-md-3 form-floating">
+          <input class="form-control" type="text" value="{{ loja.email }}" readonly>
+          <label>E-mail</label>
+        </div>
+      </div>
+
+      <div class="row g-1 mb-2">
+        <div class="col-md-3 form-floating">
+          <input class="form-control" type="text" value="{{ loja.operador }}" readonly>
+          <label>Operador</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{{ loja.filial }}" readonly>
+          <label>Filial</label>
+        </div>
+        <div class="col-md-2 form-floating">
+          <input class="form-control" type="text" value="{% if loja.get_status_display %}{{ loja.get_status_display }}{% else %}{{ loja.status }}{% endif %}" readonly>
+          <label>Status</label>
+        </div>
+      </div>
     </div>
- 
-    <div class="card-body">
-        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Dados Bancários</h5>
-        {% for dados_bancarios in dadosbancarios %}
-        <div class="row g-1 mb-2">
-            <div class="col-md-3"><strong>Código:</strong> {{ dados_bancarios.codigo }}</div>
-            <div class="col-md-3"><strong>Agência:</strong> {{ dados_bancarios.agencia }}</div>
-            <div class="col-md-3"><strong>Conta:</strong> {{ dados_bancarios.conta }}</div>
-        </div>
-        {% empty %}
-        <p>Sem dados bancários cadastrados.</p>
-        {% endfor %}
-    </div>    
+  </div>
 
+  <!-- ========== SÓCIOS ========== -->
+  <div class="card formulario-card mt-3">
+    <div class="card-header">
+      <i class="material-icons me-2">groups</i> Sócios
+    </div>
     <div class="card-body">
-        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Sócios</h5>
+      {% if socios %}
         {% for socio in socios %}
         <div class="row g-1 mb-2">
-            <div class="col-md-2"><strong>CPF:</strong> {{ socio.cpf_socio }}</div>
-            <div class="col-md-3"><strong>Nome:</strong> {{ socio.nome_socio }}</div>
-            <div class="col-md-2"><strong>Data de Nascimento:</strong> {{ socio.dt_nascimento_socio|date:"d/m/Y" }}</div>
-            <div class="col-md-2"><strong>Celular:</strong> {{ socio.celular }}</div>
-            <div class="col-md-3"><strong>Email:</strong> {{ socio.email }}</div>
+          <div class="col-md-2 form-floating">
+            <input class="form-control" type="text" value="{{ socio.cpf_socio }}" readonly>
+            <label>CPF</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            <input class="form-control" type="text" value="{{ socio.nome_socio }}" readonly>
+            <label>Nome</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            <input class="form-control" type="text" value="{{ socio.dt_nascimento_socio|date:'d/m/Y' }}" readonly>
+            <label>Data de Nascimento</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            <input class="form-control" type="text" value="{{ socio.celular }}" readonly>
+            <label>Celular</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            <input class="form-control" type="text" value="{{ socio.email }}" readonly>
+            <label>E-mail</label>
+          </div>
         </div>
-        {% empty %}
-        <p>Sem sócios cadastrados.</p>
         {% endfor %}
+      {% else %}
+        <p>Sem sócios cadastrados.</p>
+      {% endif %}
     </div>
+  </div>
 
+  <!-- ========== VENDEDORES ========== -->
+  <div class="card formulario-card mt-3">
+    <div class="card-header">
+      <i class="material-icons me-2">storefront</i> Vendedores
+    </div>
     <div class="card-body">
-        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Vendedores</h5>
+      {% if vendedores %}
         {% for vendedor in vendedores %}
         <div class="row g-1 mb-2">
-            <div class="col-md-3"><strong>Nome:</strong> {{ vendedor.nome_vendedor }}</div>
-            <div class="col-md-2"><strong>Pix:</strong> {{ vendedor.chave_pix }}</div>
-            <div class="col-md-2"><strong>Celular:</strong> {{ vendedor.celular_vendedor }}</div>
-            <div class="col-md-3"><strong>Email:</strong> {{ vendedor.email_vendedor }}</div>
+          <div class="col-md-3 form-floating">
+            <input class="form-control" type="text" value="{{ vendedor.nome_vendedor }}" readonly>
+            <label>Nome</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            <input class="form-control" type="text" value="{{ vendedor.chave_pix }}" readonly>
+            <label>Chave Pix</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            <input class="form-control" type="text" value="{{ vendedor.celular_vendedor }}" readonly>
+            <label>Celular</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            <input class="form-control" type="text" value="{{ vendedor.email_vendedor }}" readonly>
+            <label>E-mail</label>
+          </div>
         </div>
-        {% empty %}
-        <p>Sem vendedores cadastrados.</p>
         {% endfor %}
-    </div>    
+      {% else %}
+        <p>Sem vendedores cadastrados.</p>
+      {% endif %}
+    </div>
+  </div>
 
+  <!-- ========== DADOS BANCÁRIOS ========== -->
+  <div class="card formulario-card mt-3">
+    <div class="card-header">
+      <i class="material-icons me-2">account_balance</i> Dados Bancários
+    </div>
     <div class="card-body">
-        <h5 class="card-title titulo-secao" style="margin-bottom: 20px; color: rgb(79, 64, 118);">Acessos às Financeiras</h5>
+      {% if dadosbancarios %}
+        {% for dados in dadosbancarios %}
+        <div class="row g-1 mb-2">
+          <div class="col-md-4 form-floating">
+            <input class="form-control" type="text" value="{{ dados.codigo }}" readonly>
+            <label>Código do Banco</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            <input class="form-control" type="text" value="{{ dados.agencia }}" readonly>
+            <label>Agência</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            <input class="form-control" type="text" value="{{ dados.conta }}" readonly>
+            <label>Conta</label>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p>Sem dados bancários cadastrados.</p>
+      {% endif %}
+    </div>
+  </div>
 
+  <!-- ========== ACESSOS ÀS FINANCEIRAS ========== -->
+  <div class="card formulario-card mt-3">
+    <div class="card-header">
+      <i class="material-icons me-2">vpn_key</i> Acessos
+    </div>
+    <div class="card-body">
+      {% if acessos %}
         {% for acesso in acessos %}
         <div class="row g-1 mb-2">
-            <div class="col-md-3"><strong>Financeira:</strong> {{ acesso.financeira }}</div>
-            <div class="col-md-3"><strong>Código de Acesso:</strong> {{ acesso.codigo_acesso }}</div>
+          <div class="col-md-3 form-floating">
+            <input class="form-control" type="text" value="{{ acesso.financeira }}" readonly>
+            <label>Financeira</label>
+          </div>
+          <div class="col-md-2 form-floating">
+            <input class="form-control" type="text" value="{{ acesso.codigo_acesso }}" readonly>
+            <label>Código de Acesso</label>
+          </div>
+          <div class="col-md-3 form-floating">
+            <input class="form-control" type="text" value="{{ acesso.nm_cadastro_fin }}" readonly>
+            <label>Nome Cadastro</label>
+          </div>
         </div>
-        {% empty %}
-        <p>Sem acessos cadastrados.</p>
         {% endfor %}
+      {% else %}
+        <p>Sem acessos cadastrados.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ========== ANEXOS ========== -->
+  <div class="card formulario-card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-file-alt me-2"></i> Anexos</span>
+        <a href="{% url 'lojas:baixar_todos_anexos' loja.id %}" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-download"></i> Baixar Todos
+        </a>
+    </div>
+    <div class="card-body">
+        {% if anexos %}
+        <ul class="list-group">
+            {% for anexo in anexos %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ anexo.arquivo.name }}</span>
+                <div>
+                    <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalAnexo{{ anexo.id }}">
+                        <i class="fas fa-eye"></i> Visualizar
+                    </button>
+                    <a href="{{ anexo.arquivo.url }}" download class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-download"></i> Baixar
+                    </a>
+                </div>
+            </li>
+
+            <!-- Modal de Visualização -->
+            <div class="modal fade" id="modalAnexo{{ anexo.id }}" tabindex="-1" aria-labelledby="modalLabel{{ anexo.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel{{ anexo.id }}">Visualizar Documento</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            {% if anexo.arquivo.url|lower|slice:"-4:" == '.pdf' %}
+                                <iframe src="{{ anexo.arquivo.url }}" width="100%" height="500px"></iframe>
+                            {% else %}
+                                <img src="{{ anexo.arquivo.url }}" class="img-fluid" alt="Anexo">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>Sem anexos disponíveis.</p>
+        {% endif %}
     </div>
 </div>
 
 
-<a href="{% url 'lojas:criar_editar_loja' loja.id %}" id="btn btn-primary">Editar Loja</a>
-<a href="{% url 'lojas:listar_lojas' %}" class="btn btn-secondary">Voltar</a>
+  <!-- BOTÃO VOLTAR -->
+  <div class="col-12 mt-3">
+    <a href="{% url 'lojas:listar_lojas' %}" class="btn btn-secondary">Voltar</a>
+  </div>
+
+<!--</div>-->
 
 {% endblock %}
