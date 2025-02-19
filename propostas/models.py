@@ -146,7 +146,7 @@ class StatusProposta(models.Model):
     ds_status = models.CharField("Status da Proposta", max_length=45, null=True, blank=True)
 
     def __str__(self):
-        return self.ds_status
+        return f"{self.ds_status}"
 
 class PagamentoComissao(models.Model):
     loja = models.ForeignKey("lojas.Loja", on_delete=models.CASCADE, related_name="pagamentos")

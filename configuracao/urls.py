@@ -7,7 +7,9 @@ from .views import (
     # Perfil
     PerfilListView, PerfilCreateView, PerfilUpdateView, PerfilDeleteView,
     # Filial
-    FilialListView, FilialCreateView, FilialUpdateView, FilialDeleteView, ConfiguracaoView
+    FilialListView, FilialCreateView, FilialUpdateView, FilialDeleteView, ConfiguracaoView,
+    # StatusProposta
+    StatusPropostaListView, StatusPropostaCreateView, StatusPropostaUpdateView, StatusPropostaDeleteView
 )
 from . import views
 
@@ -39,4 +41,11 @@ urlpatterns = [
     path('filial/novo/', FilialCreateView.as_view(), name='filial_create'),
     path('filial/editar/<int:pk>/', FilialUpdateView.as_view(), name='filial_update'),
     path('filial/excluir/<int:pk>/', FilialDeleteView.as_view(), name='filial_delete'),
+    
+    # StatusProposta
+    path('status-proposta/', StatusPropostaListView.as_view(), name='statusproposta_list'),
+    path('status-proposta/novo/', StatusPropostaCreateView.as_view(), name='statusproposta_create'),
+    path('status-proposta/editar/<int:pk>/', StatusPropostaUpdateView.as_view(), name='statusproposta_update'),
+    path('status-proposta/excluir/<int:pk>/', StatusPropostaDeleteView.as_view(), name='statusproposta_delete'),
+    
 ]

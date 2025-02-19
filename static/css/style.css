@@ -4,7 +4,7 @@
    :root {
     --background-color: #ffffff;      /* Fundo suave, cinza-azulado claro */
     --text-color: #2C3E50;            /* Texto em azul-acinzentado escuro */
-    --navbar-bg: #3e668e;             /* Navbar em azul-acinzentado profundo */
+    --navbar-bg: #114171;             /* Navbar em azul-acinzentado profundo */
     --link-color: #ffffff;            /* Links em branco para bom contraste */
     --offcanvas-bg: #3e668e;          /* Fundo do offcanvas, tom similar à navbar */
     --titulo-bg: #E0E7EF;             /* Fundo suave para cabeçalhos de seção */
@@ -129,16 +129,18 @@
     margin-bottom: 0;
     padding: 0px !important;
     display: block;
+    border: none !important;
   }
   
   .offcanvas-body .nav-item,
   .offcanvas-body .nav-link {
     width: 100%;
-    padding: 2px;
+    padding: 5px;
     color: var(--link-color);
     transition: background-color 0.3s ease, color 0.3s ease;
-    font-size: small;
+    font-size: 1rem;
     display: block;
+    border: none !important;
     outline: none !important;
     align-items: center;
     margin: 0;
@@ -157,6 +159,7 @@
 
   .offcanvas-body .nav-link i {
     margin-right: 5px;
+    font-size: 1rem !important;
   }
   
   /* =============================================
@@ -264,20 +267,16 @@
     padding-top: 20px !important;
 
   }
-  
-  .btn-positive:hover {
-    background-color: var(--btn-positive-hover-bg);
-  }
-  
+ 
+
   .btn-positive-half {
     position: fixed;
     bottom: 0;
     right: 0;
     width: 50%;
-  }
-  
-  .btn-positive-half:hover {
-    background-color: var(--btn-positive-hover-bg);
+    height: 50px;
+    z-index: 1000;
+    padding-top: 15px !important;
   }
   
   .btn-negative-half {
@@ -293,6 +292,8 @@
     transition: background 0.3s ease;
     z-index: 1000;
     color: #fff;
+    padding-top: 15px !important;
+
   }
   
   .btn-negative-half:hover {
@@ -639,25 +640,28 @@
   .formulario-card {
     border-radius: 0;
     border: none;
-    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2) !important;
     overflow: hidden;
     padding: 0;
   }
   
   .formulario-card .card-header {
-    background-color: rgb(204, 212, 218) !important;
+    background-color: rgb(255, 255, 255) !important;
     border: none;
-    color: #fff;
+    color: #7079a5 !important;
+    font-size: 1.2rem;
     font-weight: bold;
     display: flex;
     align-items: center;
-    vertical-align: middle;
     margin: 0;
     padding: 12px 16px;
+    vertical-align: middle !important;
   }
   
   .formulario-card .card-header i {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+    color: #7079a5 !important;
+
   }
   
   /* Garante que os labels dentro do form-floating sejam transparentes */
@@ -693,4 +697,17 @@
   hr {
     padding: 0 !important;
     margin-top: 0 !important;
+  }
+
+  .saudacao {
+    margin-top: 60px; /* Ajuste conforme a altura da navbar */
+    background-color: #ffffff;
+    text-align: center;
+    padding: 10px;
+    padding-top: 3px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    height: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }

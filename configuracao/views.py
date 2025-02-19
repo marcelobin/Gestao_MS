@@ -8,9 +8,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 
 from financeiras.models import Modalidade, Segmento
 from usuarios.models import Perfil, Filial
+from propostas.models import StatusProposta
 
 from .forms import (
-    ModalidadeForm, SegmentoForm, PerfilForm, FilialForm
+    ModalidadeForm, SegmentoForm, PerfilForm, FilialForm, StatusPropostaForm
 )
 
 class ConfiguracaoView(LoginRequiredMixin, TemplateView):
@@ -311,3 +312,80 @@ class FilialDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
         context['rota_delete'] = f"configuracao:{nome_modelo_lower}_delete"
         context['rota_list'] = f"configuracao:{nome_modelo_lower}_list"       
         return context    
+
+
+# ----------------------------
+# StatusProposta
+# ----------------------------
+
+class StatusPropostaListView(LoginRequiredMixin, ListView):
+    model = StatusProposta
+    template_name = 'configuracao/objeto_list.html'
+    context_object_name = 'objetos'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo_plural'] = self.model._meta.verbose_name_plural
+        context['nome_modelo'] = self.model._meta.model_name
+        nome_modelo_lower = self.model._meta.model_name.lower()
+        context['rota_create'] = f"configuracao:{nome_modelo_lower}_create"
+        context['rota_update'] = f"configuracao:{nome_modelo_lower}_update"
+        context['rota_delete'] = f"configuracao:{nome_modelo_lower}_delete"
+        context['rota_list'] = f"configuracao:{nome_modelo_lower}_list"       
+        return context
+    
+class StatusPropostaCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = StatusProposta
+    form_class = StatusPropostaForm
+    template_name = 'configuracao/objeto_form.html'
+    success_url = reverse_lazy('configuracao:statusproposta_list')  # Adicione o underline correto
+    permission_required = 'propostas.add_statusproposta'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo_plural'] = self.model._meta.verbose_name_plural
+        context['nome_modelo'] = self.model._meta.model_name
+        nome_modelo_lower = self.model._meta.model_name.lower()
+        context['rota_create'] = f"configuracao:{nome_modelo_lower}_create"
+        context['rota_update'] = f"configuracao:{nome_modelo_lower}_update"
+        context['rota_delete'] = f"configuracao:{nome_modelo_lower}_delete"
+        context['rota_list'] = f"configuracao:{nome_modelo_lower}_list"       
+        return context
+    
+class StatusPropostaUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = StatusProposta
+    form_class = StatusPropostaForm
+    template_name = 'configuracao/objeto_form.html'
+    success_url = reverse_lazy('configuracao:statusproposta_list')
+    permission_required = 'propostas.change_statusproposta'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo_plural'] = self.model._meta.verbose_name_plural
+        context['nome_modelo'] = self.model._meta.model_name
+        nome_modelo_lower = self.model._meta.model_name.lower()
+        context['rota_create'] = f"configuracao:{nome_modelo_lower}_create"
+        context['rota_update'] = f"configuracao:{nome_modelo_lower}_update"
+        context['rota_delete'] = f"configuracao:{nome_modelo_lower}_delete"
+        context['rota_list'] = f"configuracao:{nome_modelo_lower}_list"       
+        return context
+    
+class StatusPropostaDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = StatusProposta
+    template_name = 'configuracao/objeto_confirm_delete.html'
+    success_url = reverse_lazy('configuracao:statusproposta_list')
+    permission_required = 'propostas.delete_statusproposta'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo_plural'] = self.model._meta.verbose_name_plural
+        context['nome_modelo'] = self.model._meta.model_name
+        nome_modelo_lower = self.model._meta.model_name.lower()
+        context['rota_create'] = f"configuracao:{nome_modelo_lower}_create"
+        context['rota_update'] = f"configuracao:{nome_modelo_lower}_update"
+        context['rota_delete'] = f"configuracao:{nome_modelo_lower}_delete"
+        context['rota_list'] = f"configuracao:{nome_modelo_lower}_list"
+        return context
+    
+
+
