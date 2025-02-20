@@ -3,13 +3,10 @@
 
 {% block content %}
 
-<div class="container my-4" id="main-content">
+<div>
 
   <!-- Título da Página -->
-  <div class="d-flex align-items-center mb-4 titulo-container">
-    <i class="fas fa-file-alt titulo-icone"></i>
-    <h4 class="titulo-texto">Proposta {{ proposta.nr_proposta }}</h4>
-  </div>
+
 
   <!-- DADOS DA PROPOSTA -->
   <div class="card formulario-card mb-4">
@@ -89,6 +86,7 @@
     <div class="card-header">
       <i class="fas fa-car me-2"></i> Dados do Veículo
     </div>
+
     <div class="card-body">
       <div class="row g-3">
         <div class="col-md-3 form-floating">
@@ -135,6 +133,7 @@
     <div class="card-header">
       <i class="fas fa-user me-2"></i> Dados do Cliente
     </div>
+
     <div class="card-body">
       <div class="row g-3">
         <div class="col-md-3 form-floating">
@@ -168,13 +167,14 @@
     </div>
   </div>
 
-  <!-- ENDEREÇO -->
-  <div class="card formulario-card mb-4">
-    <div class="card-header">
-      <i class="fas fa-home me-2"></i> Endereço
-    </div>
-    <div class="card-body">
-      {% for endereco in enderecos %}
+<!-- ENDEREÇO -->
+<div class="card formulario-card mb-4">
+  <div class="card-header">
+    <i class="fas fa-home me-2"></i> Endereço
+  </div>
+
+  <div class="card-body">
+    {% if endereco %}
       <div class="row g-3">
         <div class="col-md-3 form-floating">
           <input type="text" value="{{ endereco.cep|mask_cep }}" class="form-control" readonly>
@@ -207,18 +207,20 @@
           <label>Complemento</label>
         </div>
       </div>
-      <hr>
-      {% endfor %}
-    </div>
+    {% else %}
+      <p>Nenhum endereço cadastrado.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- CONTATOS -->
+<div class="card formulario-card mb-4">
+  <div class="card-header">
+    <i class="fas fa-phone me-2"></i> Contatos
   </div>
 
-  <!-- CONTATOS -->
-  <div class="card formulario-card mb-4">
-    <div class="card-header">
-      <i class="fas fa-phone me-2"></i> Contatos
-    </div>
-    <div class="card-body">
-      {% for contato in contatos %}
+  <div class="card-body">
+    {% if contato %}
       <div class="row g-3">
         <div class="col-md-4 form-floating">
           <input type="text" value="{{ contato.telefone_fixo|mask_phone }}" class="form-control" readonly>
@@ -233,18 +235,21 @@
           <label>Email</label>
         </div>
       </div>
-      <hr>
-      {% endfor %}
-    </div>
+    {% else %}
+      <p>Nenhum contato cadastrado.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- DADOS COMERCIAIS -->
+<div class="card formulario-card mb-4">
+  <div class="card-header">
+    <i class="fas fa-briefcase me-2"></i> Dados Comerciais
   </div>
 
-  <!-- DADOS COMERCIAIS -->
-  <div class="card formulario-card mb-4">
-    <div class="card-header">
-      <i class="fas fa-briefcase me-2"></i> Dados Comerciais
-    </div>
-    <div class="card-body">
-      {% for profissao in profissoes %}
+
+  <div class="card-body">
+    {% if profissao %}
       <div class="row g-3">
         <div class="col-md-4 form-floating">
           <input type="text" value="{{ profissao.profissao }}" class="form-control" readonly>
@@ -277,10 +282,11 @@
           <label>Telefone do Trabalho</label>
         </div>
       </div>
-      <hr>
-      {% endfor %}
-    </div>
+    {% else %}
+      <p>Nenhuma profissão cadastrada.</p>
+    {% endif %}
   </div>
+</div>
 
 </div>
 

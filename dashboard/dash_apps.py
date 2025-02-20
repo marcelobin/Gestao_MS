@@ -1,6 +1,7 @@
 import pandas as pd
 from django_plotly_dash import DjangoDash
 from dash import dcc, html, Input, Output
+import dash_bootstrap_components as dbc
 import plotly.express as px
 from propostas.models import Proposta
 from datetime import datetime, timedelta
@@ -84,53 +85,80 @@ app.layout = html.Div([
             )
         ], className="col-md-2"),
     ], className="row mb-3"),
+    html.Hr(),
 
-    # ------------------------------------------------------------
-    # KPIs (uma linha, 4 colunas)
-    # ------------------------------------------------------------
+# ------------------------------------------------------------
+# KPIs (uma linha, 4 colunas) dentro de cards estilizados
+# ------------------------------------------------------------
     html.Div([
         # Produção Total (Paga)
-        html.Div([
-            html.P("Produção Total"),
-            html.H3(id="total-producao", style={"color": "#0B2559"})
-        ], className="card-dash p-3 col-md-3"),
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.P("Produção Total"),
+                    html.H3(id="total-producao", style={"color": "#0B2559"})
+                ]),
+                className="kpi-card"
+            ), width=3
+        ),
 
         # Total de Propostas Pagas
-        html.Div([
-            html.P("Total de Propostas Pagas"),
-            html.H3(id="total-propostas", style={"color": "#0B2559"})
-        ], className="card-dash p-3 col-md-3"),
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.P("Total de Propostas Pagas"),
+                    html.H3(id="total-propostas", style={"color": "#0B2559"})
+                ]),
+                className="kpi-card"
+            ), width=3
+        ),
 
         # Receita Prevista (Paga)
-        html.Div([
-            html.P("Receita Prevista"),
-            html.H3(id="projecao-receita", style={"color": "#0B2559"})
-        ], className="card-dash p-3 col-md-3"),
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.P("Receita Prevista"),
+                    html.H3(id="projecao-receita", style={"color": "#0B2559"})
+                ]),
+                className="kpi-card"
+            ), width=3
+        ),
 
         # Valor Médio Financiado (Paga)
-        html.Div([
-            html.P("Valor Médio Financiado"),
-            html.H3(id="valor-medio", style={"color": "#0B2559"})
-        ], className="card-dash p-3 col-md-3"),
-    ], className="row mb-4"),
+        dbc.Col(
+            dbc.Card(
+                dbc.CardBody([
+                    html.P("Valor Médio Financiado"),
+                    html.H3(id="valor-medio", style={"color": "#0B2559"})
+                ]),
+                className="kpi-card"
+            ), width=3
+        ),
+    ], className="row g-3 mb-3"),  # "g-3" adiciona espaçamento entre as colunas
 
     # ------------------------------------------------------------
     # Gráficos de barras (Operador / Loja) - mesma linha
     # ------------------------------------------------------------
     html.Div([
         html.Div([
+            dbc.Card([
             dcc.Graph(id="grafico-operador", animate=True)
+            ]),
         ], className="col-md-6"),
         html.Div([
+            dbc.Card([
             dcc.Graph(id="grafico-loja", animate=True)
+            ]),
         ], className="col-md-6"),
-    ], className="row mb-4"),
+    ], className="row g-3 mb-3"),
 
     # ------------------------------------------------------------
     # Gráfico de Tendência (linha) - abaixo, largura total
     # ------------------------------------------------------------
     html.Div([
+        dbc.Card([
         dcc.Graph(id="grafico-tempo", animate=True)
+        ]),
     ], className="col-md-12"),
 ])
 

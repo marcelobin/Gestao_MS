@@ -61,6 +61,7 @@ def listar_lojas(request):
         'lojas': lojas,
         'operadores': operadores,
         'filiais': filiais,  # Passa as filiais para o contexto
+        'titulo_pagina': 'Lojas Cadastradas',
         
     }
     return render(request, 'lojas/listar_lojas.html', context)
@@ -194,6 +195,7 @@ def pre_cadastro_loja(request):
         anexo_formset = LojaAnexoFormSet(instance=None, prefix='anexos')
     
     return render(request, 'lojas/pre_cadastro.html', {
+        'titulo_pagina': f'Solicitação de Cadastramento de Loja',
         'form': form,
         'socio_formset': socio_formset,
         'vendedor_formset': vendedor_formset,

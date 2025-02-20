@@ -2,98 +2,97 @@
 
 {% block content %}
 
-    <div class="d-flex align-items-center mb-4 titulo-container">
-        <h5 class="titulo-texto">Lista Pagamento de Retorno</h5>
-    </div>
-    <hr>
 
     <!-- Filtros Collapsíveis -->
     <div class="mb-3" style="margin-top: 10px;">
-        <h6 class="card-title d-inline-block" style="color:green; cursor: pointer;"
+        <h6 class="card-title d-inline-block" style="color:gray; cursor: pointer;"
             data-bs-toggle="collapse" data-bs-target="#filtrosCollapse"
             aria-expanded="false" aria-controls="filtrosCollapse">
             Filtros +
         </h6>
+
         <div class="collapse" id="filtrosCollapse">
-            <div class="mb-3">
-                <form method="get" id="filterForm">
-                    <div class="row g-3">
-                        <!-- Mês/Ano -->
-                        <div class="col-md-3 form-floating">
-                            <select name="periodo" id="filtro_periodo" class="form-select">
-                                <option value="">Todos</option>
-                                {% for valor, label in periodos %}
-                                    <option value="{{ valor }}"
-                                        {% if request.GET.periodo == valor|stringformat:"s" %}selected{% endif %}>
-                                        {{ label }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <label for="filtro_periodo">Mês/Ano</label>
-                        </div>
+            <div class="card-filtro">
+                <div class="mb-3">
+                    <form method="get" id="filterForm">
+                        <div class="row g-3">
+                            <!-- Mês/Ano -->
+                            <div class="col-md-2 form-floating">
+                                <select name="periodo" id="filtro_periodo" class="form-select">
+                                    <option value="">Todos</option>
+                                    {% for valor, label in periodos %}
+                                        <option value="{{ valor }}"
+                                            {% if request.GET.periodo == valor|stringformat:"s" %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="filtro_periodo">Mês/Ano</label>
+                            </div>
 
-                        <!-- Filial -->
-                        <div class="col-md-3 form-floating">
-                            <select name="filial" id="filtro_filial" class="form-select">
-                                <option value="">Todas</option>
-                                {% for filial in filiais %}
-                                    <option value="{{ filial }}"
-                                        {% if filial|stringformat:"s" == request.GET.filial %}selected{% endif %}>
-                                        {{ filial }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <label for="filtro_filial">Filial</label>
-                        </div>
+                            <!-- Filial -->
+                            <div class="col-md-2 form-floating">
+                                <select name="filial" id="filtro_filial" class="form-select">
+                                    <option value="">Todas</option>
+                                    {% for filial in filiais %}
+                                        <option value="{{ filial }}"
+                                            {% if filial|stringformat:"s" == request.GET.filial %}selected{% endif %}>
+                                            {{ filial }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="filtro_filial">Filial</label>
+                            </div>
 
-                        <!-- Loja -->
-                        <div class="col-md-3 form-floating">
-                            <select name="loja" id="filtro_loja" class="form-select">
-                                <option value="">Todas</option>
-                                {% for loja in lojas %}
-                                    <option value="{{ loja.id }}"
-                                        {% if loja.id|stringformat:"s" == request.GET.loja %}selected{% endif %}>
-                                        {{ loja.nm_fantasia }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <label for="filtro_loja">Loja</label>
-                        </div>
+                            <!-- Loja -->
+                            <div class="col-md-3 form-floating">
+                                <select name="loja" id="filtro_loja" class="form-select">
+                                    <option value="">Todas</option>
+                                    {% for loja in lojas %}
+                                        <option value="{{ loja.id }}"
+                                            {% if loja.id|stringformat:"s" == request.GET.loja %}selected{% endif %}>
+                                            {{ loja.nm_fantasia }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="filtro_loja">Loja</label>
+                            </div>
 
-                        <!-- Operador -->
-                        <div class="col-md-3 form-floating">
-                            <select name="operador" id="filtro_operador" class="form-select">
-                                <option value="">Todos</option>
-                                {% for operador in operadores %}
-                                    <option value="{{ operador.id }}"
-                                        {% if operador.id|stringformat:"s" == request.GET.operador %}selected{% endif %}>
-                                        {{ operador.nm_operador }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <label for="filtro_operador">Operador</label>
-                        </div>
-                    </div>
-
-                    <div class="row g-3 mt-3">
-                        <div class="col-md-3">
-                            <div class="wrapper d-flex align-items-center">
-                                <!-- Botão de Filtrar -->
-                                <div class="button me-2">
-                                    <button type="submit" class="icon btn btn-primary">
-                                        <i class="fa-solid fa-filter"></i>
-                                    </button>
-                                    <span class="ms-1">Filtrar</span>
+                            <!-- Operador -->
+                            <div class="col-md-2 form-floating">
+                                <select name="operador" id="filtro_operador" class="form-select">
+                                    <option value="">Todos</option>
+                                    {% for operador in operadores %}
+                                        <option value="{{ operador.id }}"
+                                            {% if operador.id|stringformat:"s" == request.GET.operador %}selected{% endif %}>
+                                            {{ operador.nm_operador }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="filtro_operador">Operador</label>
+                            </div>
+                            <div class="col-md-3 " style="float: right;">
+                                <div class="wrapper">
+                                    <!-- Botão de Filtrar -->
+                                    <div class="button">
+                                        <button type="submit" class="icon">
+                                            <i class="fa-solid fa-filter"></i>
+                                        </button>
+                                        <span>Filtrar</span>
+                                    </div>
+                            
+                                    <!-- Botão de Limpar Filtros -->
+                                    <a href="{% url 'propostas:listar_propostas' %}" class="button">
+                                        <div class="icon">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </div>
+                                        <span>Limpar Filtro</span>
+                                    </a>
                                 </div>
-                                <!-- Botão de Limpar Filtros -->
-                                <a href="{% url 'propostas:listar_propostas' %}" class="button btn btn-secondary">
-                                    <i class="fa-solid fa-trash"></i>
-                                    <span class="ms-1">Limpar Filtro</span>
-                                </a>
                             </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

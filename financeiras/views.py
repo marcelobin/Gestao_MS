@@ -31,8 +31,16 @@ def financeira_create(request):
 
 
 def financeira_list(request):
+    """Lista todas as financeiras cadastradas."""
     financeiras = Financeira.objects.all()
-    return render(request, 'financeiras/financeira_list.html', {'financeiras': financeiras})
+    
+    contexto = {
+        'financeiras': financeiras,
+        'titulo_pagina': 'Financeiras'  # Adicionando o título ao contexto
+    }
+
+    return render(request, 'financeiras/financeira_list.html', contexto)
+
 
 
 def financeira_detail(request, pk):

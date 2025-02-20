@@ -4,10 +4,7 @@
 
 {% block content %}
   
-  <div class="d-flex align-items-center mb-4 titulo-container">
-    <h4 class="titulo-texto">{{ titulo_pagina }}</h4>
-  </div>
-  <hr>
+<div>
 
   <form method="post" id="propostaForm" enctype="multipart/form-data" class="needs-validation">
     {% csrf_token %}
@@ -351,16 +348,25 @@
       </div>
     </div>
 
-    <!-- BOTÕES DE AÇÃO -->
-    <div class="d-flex justify-content-between my-4">
-      <button type="button" class="btn botao-voltar"
-              onclick="window.location.href='{% url 'propostas:listar_propostas' %}'">
-        <i class="fas fa-arrow-left me-1"></i> Voltar
-      </button>
-      <button type="submit" class="btn botao-salvar">
-        <i class="fas fa-save me-1"></i> Salvar Proposta
-      </button>
-    </div>
+<!-- BOTÕES DE AÇÃO -->
+<div class="d-flex justify-content-between my-4">
+  <!-- Botão Voltar -->
+  <button>
+      <a href="{% url 'propostas:listar_propostas' %}" id="btn">
+          <div class="btn-negative-half">
+              <i class="fas fa-arrow-left me-1"></i> Voltar
+          </div>
+      </a>
+  </button>
+
+  <!-- Botão Salvar -->
+  <button type="submit" id="btn">
+      <div class="btn-positive-half">
+          <i class="fas fa-save me-1"></i> Salvar Proposta
+      </div>
+  </button>
+</div>
+
   </form>
 
 <!-- Modal Novo Vendedor -->
@@ -464,6 +470,30 @@
       
       // Máscara para CPF
       $('input[id*="nr_cpf"]').mask('000.000.000-00', { reverse: true });
+    }
+
+    // ========================================================================
+    // HABILITAR/DESABILITAR DATA DE PAGAMENTO CONFORME STATUS
+    // ========================================================================
+    function verificarStatusPagamento() {
+      let statusField = $("#{{ proposta_form.status.id_for_label }}");
+      let dataPagamentoField = $("#{{ proposta_form.dt_pagamento.id_for_label }}");
+
+
+      function atualizarCampoPagamento() {
+        let statusTexto = statusField.find("option:selected").text().trim();
+        if (statusTexto === "Paga") {
+          dataPagamentoField.removeAttr("disabled");
+        } else {
+          dataPagamentoField.attr("disabled", "true");
+          dataPagamentoField.val("");
+        }
+      }
+
+      // Executa a verificação ao carregar a página
+      atualizarCampoPagamento();
+      // Adiciona listener para mudanças no status
+      statusField.on('change', atualizarCampoPagamento);
     }
 
     // ========================================================================
@@ -877,8 +907,10 @@
     carregarOperadorLoja();
     carregarFinanceiraModalSegProd();
     aplicarMascaras();
+    verificarStatusPagamento();  // <-- Chamamos a função para habilitar/desabilitar dt_pagamento
   });
 </script>
+
 
 
 

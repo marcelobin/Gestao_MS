@@ -26,7 +26,13 @@ def login_view(request):
 def lista_usuarios(request):
     """Lista todos os usuários cadastrados."""
     operadores = Operador.objects.select_related('user')
-    return render(request, 'usuarios/lista_usuarios.html', {'operadores': operadores})
+    contexto = {
+        'operadores': operadores,
+        'titulo_pagina': 'Lista de Usuários'  # Adicionando o título ao contexto
+    }
+    return render(request, 'usuarios/lista_usuarios.html', contexto)
+
+
 
 
 @login_required
@@ -49,10 +55,14 @@ def criar_usuario(request):
         user_form = UserForm()
         operador_form = OperadorForm()
 
-    return render(request, 'usuarios/usuario_form.html', {
+    contexto = {
         'user_form': user_form,
-        'operador_form': operador_form
-    })
+        'operador_form': operador_form,
+        'titulo_pagina': 'Criar Novo Usuário'  # Adicionando o título ao contexto
+    }
+
+    return render(request, 'usuarios/usuario_form.html', contexto)
+
 
 
 @login_required
@@ -90,11 +100,14 @@ def editar_usuario(request, pk):
     else:
         user_form = UserForm(instance=user)
         operador_form = OperadorForm(instance=operador)
-
-    return render(request, 'usuarios/usuario_form.html', {
+        
+    contexto = {
         'user_form': user_form,
-        'operador_form': operador_form
-    })
+        'operador_form': operador_form,
+        'titulo_pagina': 'Editar Usuário'  # Adicionando o título ao contexto
+    }
+    
+    return render(request, 'usuarios/usuario_form.html', contexto)
 
 
 @login_required

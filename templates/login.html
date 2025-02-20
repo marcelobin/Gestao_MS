@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <!-- FontAwesome para os ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         body, html {
             height: 100%;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(rgba(93, 33, 148, 0.5), rgba(0, 0, 0, 0.5));
         }
 
         .login-container {
@@ -17,58 +19,72 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(8, 34, 80, .8);
             backdrop-filter: blur(10px);
         }
 
         .login-box {
-            background: rgba(255, 255, 255, 0.1);
+            background-color: transparent;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             color: #fff;
             text-align: center;
             width: 400px;
-            box-sizing: border-box;  /* Inclui o padding no cálculo da largura */
-
+            box-sizing: border-box;
         }
 
         .login-box h2 {
             margin-bottom: 20px;
         }
 
-        .login-box input[type="text"],
-        .login-box input[type="password"] {
+        .input-container {
+            position: relative;
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 5px;
-            color: #fff;
+            margin-bottom: 20px;
         }
 
-        .login-box input::placeholder {
-            color: #ddd;
+        .input-container input {
+            width: 60%;
+            padding: 10px;
+            padding-left: 5px; /* Espaço para o ícone */
+            background: transparent !important; /* Fundo transparente */
+            border: none;
+            border-bottom: 1px solid white; /* Apenas borda inferior branca */
+            outline: none;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .input-container input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 18px;
         }
 
         form button {
-            width: 100%;
-            padding: 12px;
-            background: #1e90ff;
+            width: 150px;
+            height: 50px;
+            background: rgb(206, 51, 27);
             border: none;
-            border-radius: 5px;
+            border-radius: 35px;
             color: #fff;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
-            margin: 15px 0 10px;
-            transition: background 0.3s;
+            margin-top: 30px;
+            transition: background 0.3s ease-in-out;
         }
 
         form button:hover {
-            background: rgb(238, 161, 28);
+            background: rgb(180, 40, 20);
         }
-        
 
         .login-box a {
             display: block;
@@ -85,48 +101,32 @@
         .logo {
             margin-bottom: 20px;
         }
-
-        #background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            z-index: -1;
-        }
-
-        /* Estilização do conteúdo para ficar visível */
-        .content {
-            position: relative;
-            z-index: 1;
-            color: white;
-            text-align: center;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5); /* Adiciona um leve fundo escuro para melhor legibilidade */
-        }
     </style>
 </head>
 <body>
 
     <div class="login-container">
         <div class="login-box">
-            <img src="/static/images/MS Branco.png" alt="Logo" class="logo" width="80">
-            <h2>Login na sua conta</h2>
+            <img src="/static/images/MS Branco.png" alt="Logo" class="logo" width="200">
             <form method="POST">
                 {% csrf_token %}
-                <input type="text" name="username" placeholder="Usuário" required>
-                <input type="password" name="password" placeholder="Senha" required>
+                
+                <!-- Campo Usuário com Ícone -->
+                <div class="input-container">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" placeholder="Usuário" required>
+                </div>
+
+                <!-- Campo Senha com Ícone -->
+                <div class="input-container">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Senha" required>
+                </div>
+
                 <button type="submit">Entrar</button>
             </form>
-            <a href="#">Não consegue entrar?</a>
-            <small><a href="#">Política de Privacidade</a>  <a href="#">Termos de Uso</a></small>
         </div>
     </div>
+
 </body>
 </html>

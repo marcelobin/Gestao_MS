@@ -42,12 +42,7 @@
 </div>
 {% endif %}
 
-<!--<div class="container my-4" id="main-content">-->
-  <!-- Título da Página -->
-  <div class="d-flex align-items-center mb-4 titulo-container">
-    <h5 class="titulo-texto">Solicitação de Cadastramento de Loja</h5>
-  </div>
-  <hr>
+<div>
 
 
   <!-- Formulário -->
@@ -55,10 +50,11 @@
     {% csrf_token %}
 
     <!-- ========== DADOS DA LOJA ========== -->
-    <div class="card formulario-card mb-4">
+    <div class="card formulario-card mb-2">
       <div class="card-header">
         <i class="fas fa-building me-2"></i> Dados da Loja
       </div>
+      <hr>
       <div class="card-body">
         <div class="row g-1 mb-2">
           <div class="col-md-2 form-floating">
@@ -143,6 +139,8 @@
       <div class="card-header">
         <i class="material-icons me-2">groups</i>  Sócios
       </div>
+      <hr>
+
       <div class="card-body">
         {{ socio_formset.management_form }}
 
@@ -217,6 +215,8 @@
       <div class="card-header">
         <i class="material-icons me-2">storefront</i> Vendedores
       </div>
+      <hr>
+
       <div class="card-body">
         {{ vendedor_formset.management_form }}
 
@@ -282,6 +282,8 @@
       <div class="card-header">
         <i class="material-icons me-2">account_balance</i> Dados Bancários
       </div>
+      <hr>
+
       <div class="card-body">
         {{ dadosbancarios_formset.management_form }}
 
@@ -340,6 +342,8 @@
             <div class="card-header">
                 <i class="material-icons me-2">attach_file</i> Documentos / Anexos
             </div>
+            <hr>
+
             <div class="card-body">
                 {{ anexo_formset.management_form }}
                 <div class="anexo-form row g-1 mb-2" style="display:none;" id="empty-anexo-form">

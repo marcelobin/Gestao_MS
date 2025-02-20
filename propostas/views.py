@@ -8,7 +8,7 @@ from .forms import (
 )
 from clientes.models import Cliente, EnderecoCliente, ProfissaoCliente, ContatoCliente
 from financeiras.models import Financeira, Modalidade, Segmento, Produto
-from usuarios.models import Operador
+from usuarios.models import Operador, Perfil
 from lojas.models import Loja, Vendedor
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
@@ -31,10 +31,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.utils import ImageReader
 from PIL import Image as PILImage
 from django.views.decorators.csrf import csrf_exempt
-
-
-
-
+from django.contrib.auth.decorators import login_required
 
 
 # Defina o locale para pt_BR (Brasil)
@@ -241,12 +238,29 @@ def proposta_form_view(request, pk=None):
     })
 
 
-
+@login_required
 def listar_propostas(request):
-    propostas = Proposta.objects.select_related('cliente', 'veiculo', 'status').all()
+    usuario = request.user  # Obtém o usuário logado
+    
+    # Verifica se o usuário tem um perfil associado
+    try:
+        operador = usuario.operador
+        perfil_usuario = operador.perfil.ds_perfil  # Obtém o perfil do usuário
+    except Operador.DoesNotExist:
+        operador = None
+        perfil_usuario = None  # Usuário sem perfil específico
+
+    # Se for Operador, filtra apenas as propostas vinculadas a ele
+    propostas = Proposta.objects.select_related('cliente', 'veiculo', 'status')
+
+    if perfil_usuario == Perfil.OPERADOR:
+        propostas = propostas.filter(operador=operador)
+    else:
+        propostas = propostas.all()  # Administrador e Mesa de Operações veem tudo
+
     titulo_pagina = "Minhas Propostas"
 
-    # Obtendo os parâmetros da requisição GET
+    # Obtendo os parâmetros da requisição GET (filtros)
     filtro_financeira = request.GET.get('financeira')
     filtro_loja = request.GET.get('loja')
     filtro_operador = request.GET.get('operador')
@@ -278,10 +292,8 @@ def listar_propostas(request):
     # Filtrando por CPF ou Nome do Cliente
     if filtro_search_cliente:
         if filtro_search_cliente.replace('.', '').replace('-', '').isdigit():
-            # Se for um CPF (apenas números), buscar por CPF
             propostas = propostas.filter(cliente__nr_cpf__icontains=filtro_search_cliente.replace(".", "").replace("-", ""))
         else:
-            # Se for texto, buscar pelo Nome do Cliente
             propostas = propostas.filter(cliente__nm_cliente__icontains=filtro_search_cliente)
 
     # Ordenação
@@ -299,10 +311,19 @@ def listar_propostas(request):
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
 
+    # Ajuste dos filtros de Loja e Operador
+    if perfil_usuario == Perfil.OPERADOR:
+        # O operador só pode ver as lojas onde ele está vinculado
+        lojas = Loja.objects.filter(operador=operador)
+        # O operador só pode ver a si mesmo na lista de operadores
+        operadores = Operador.objects.filter(id=operador.id)
+    else:
+        # Administradores e Mesa de Operações veem todas as lojas e operadores
+        lojas = Loja.objects.all()
+        operadores = Operador.objects.all()
+
     # Obter todos os objetos relacionados para os menus de filtro
-    lojas = Loja.objects.all()
     financeiras = Financeira.objects.all()
-    operadores = Operador.objects.all()
     status_list = StatusProposta.objects.all()
 
     # Contexto para o template
@@ -338,19 +359,23 @@ def detalhe_proposta(request, pk):
     cliente = proposta.cliente  # Ajuste conforme o modelo
     veiculo = proposta.veiculo  # Ajuste conforme o modelo
 
-    # Busca endereços e contatos relacionados ao cliente
-    enderecos = cliente.enderecos.all()  # Converte RelatedManager para QuerySet
-    contatos = cliente.contatos.all()  # Converte RelatedManager para QuerySet
+    # Filtrar apenas UM endereço, contato e profissão corretos
+    endereco = EnderecoCliente.objects.filter(cliente=cliente).first()
+    contato = ContatoCliente.objects.filter(cliente=cliente).first()
+    profissao = ProfissaoCliente.objects.filter(cliente=cliente).first()
 
     # Renderiza o template com os dados
     return render(request, 'propostas/detalhe_proposta.html', {
         'titulo_pagina': f'Detalhes da Proposta #{proposta.nr_proposta}',
         'proposta': proposta,
         'cliente': cliente,
-        'enderecos': enderecos,  # Passa o QuerySet
-        'contatos': contatos,  # Passa o QuerySet
+        'endereco': endereco,  # Agora passando um único endereço
+        'contato': contato,  # Agora passando um único contato
+        'profissao': profissao,  # Agora passando uma única profissão
         'veiculo': veiculo,
     })
+
+
 
 def get_segmentos(request):
     """ Substitui o antigo get_subsegmentos. Filtra Segmento a partir da Modalidade. """
@@ -683,6 +708,7 @@ def lojas_elegiveis(request):
         'lojas': lojas_all,
         'operadores': operadores,
         'filiais': filiais,
+        'titulo_pagina' : f"Lista Pagamento de Retorno"
     }
     return render(request, 'propostas/lojas_elegiveis.html', context)
 

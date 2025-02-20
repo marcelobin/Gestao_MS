@@ -3,9 +3,6 @@
 
 {% block content %}
 <div class="container-fluid" style="padding-top:1px;">
-    <h5>Usuários</h5>
-    <hr>
-
     <div class="tableFixHead">
         <table class="table table-hover table-custom">
             <thead>
@@ -29,8 +26,13 @@
                     <td>{{ operador.perfil.ds_perfil }}</td>
                     <td>{{ operador.user.is_active|yesno:"Ativo,Inativo" }}</td>
                     <td>
-                        <a href="{% url 'usuarios:editar_usuario' operador.pk %}" class="btn btn-sm btn-warning"><i class="ri-pencil-line"></i></a>
-                        <a href="{% url 'usuarios:excluir_usuario' operador.pk %}" class="btn btn-sm btn-danger"><i class="ri-delete-bin-line"></i></a>
+                        <a href="{% url 'usuarios:editar_usuario' operador.pk %}" class="btn btn-sm btn-warning">
+                            <i class="ri-pencil-line"></i>
+                        </a>
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmarExclusaoModal" 
+                                data-userid="{{ operador.pk }}" data-username="{{ operador.nm_operador }}">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -38,7 +40,51 @@
         </table>
     </div>
 </div>
-<div class = "btn-positive">
+
+<!-- Botão para adicionar novo usuário -->
+<div class="btn-positive">
     <a href="{% url 'usuarios:criar_usuario' %}" id="btn">Novo Usuário</a>
 </div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="confirmarExclusaoModal" tabindex="-1" aria-labelledby="confirmarExclusaoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmarExclusaoLabel">Excluir Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza de que deseja excluir o usuário <strong id="userName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteUserForm" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Sim, excluir</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para atualizar o modal dinamicamente -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var confirmDeleteModal = document.getElementById("confirmarExclusaoModal");
+        confirmDeleteModal.addEventListener("show.bs.modal", function(event) {
+            var button = event.relatedTarget; // Botão que acionou o modal
+            var userId = button.getAttribute("data-userid"); // Obtém o ID do usuário
+            var userName = button.getAttribute("data-username"); // Obtém o nome do usuário
+
+            // Atualiza o nome do usuário no modal
+            document.getElementById("userName").textContent = userName;
+
+            // Atualiza a URL do formulário para excluir o usuário correto
+            var form = document.getElementById("deleteUserForm");
+            form.action = "/usuarios/" + userId + "/excluir/"; // Substitua com a URL real do Django
+        });
+    });
+</script>
+
 {% endblock %}
