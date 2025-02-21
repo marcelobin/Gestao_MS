@@ -54,7 +54,7 @@
       <div class="card-header">
         <i class="fas fa-building me-2"></i> Dados da Loja
       </div>
-      <hr>
+  
       <div class="card-body">
         <div class="row g-1 mb-2">
           <div class="col-md-2 form-floating">
@@ -135,11 +135,11 @@
     </div>
 
     <!-- ========== SÓCIOS ========== -->
+
     <div class="card formulario-card mt-3">
       <div class="card-header">
-        <i class="material-icons me-2">groups</i>  Sócios
+        <i class="fa-solid fa-people-group" style="margin-right:10px;"></i>  Sócios
       </div>
-      <hr>
 
       <div class="card-body">
         {{ socio_formset.management_form }}
@@ -211,11 +211,11 @@
     </div>
 
     <!-- ========== VENDEDORES ========== -->
+    
     <div class="card formulario-card mt-3">
       <div class="card-header">
-        <i class="material-icons me-2">storefront</i> Vendedores
+        <i class="fa-solid fa-people-line" style="margin-right:10px;"></i> Vendedores
       </div>
-      <hr>
 
       <div class="card-body">
         {{ vendedor_formset.management_form }}
@@ -278,11 +278,12 @@
     </div>
 
     <!-- ========== DADOS BANCÁRIOS ========== -->
+
+
     <div class="card formulario-card mt-3">
       <div class="card-header">
-        <i class="material-icons me-2">account_balance</i> Dados Bancários
+        <i class="fa-solid fa-file-invoice-dollar" style="margin-right:10px;"></i> Dados Bancários
       </div>
-      <hr>
 
       <div class="card-body">
         {{ dadosbancarios_formset.management_form }}
@@ -338,11 +339,12 @@
     </div>
 
         <!-- ========== DOCUMENTOS / ANEXOS ========== -->
+        
+
         <div class="card formulario-card mt-3">
             <div class="card-header">
-                <i class="material-icons me-2">attach_file</i> Documentos / Anexos
+              <i class="fa-solid fa-file-import" style="margin-right:10px;"></i> Documentos / Anexos
             </div>
-            <hr>
 
             <div class="card-body">
                 {{ anexo_formset.management_form }}

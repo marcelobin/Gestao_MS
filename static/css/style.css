@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+
 /* =============================================
    CSS Variables - Tema Único Moderno e Suave
    ============================================= */
@@ -32,13 +39,20 @@
     margin: 0;
     top:0 !important;
     /*background: var(--background-color);*/
-    background-color: rgb(239, 243, 244);
+    background-color: rgb(236, 240, 245) !important;
     color: var(--text-color);
     min-height: 100vh;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter Tight', sans-serif;
     width: 100%;
     padding: 10px;
     font-size: small;
+    max-height: calc(100vh-55px) !important;
+    overflow-y: hidden;
+  }
+
+  html {
+    background-color: rgb(255, 255, 255) !important;
+
   }
   
   a {
@@ -220,6 +234,8 @@
     align-self:  center;
     width: 100% !important;
     padding: 0 !important;
+    /*background-color: var(--background-color) !important;*/
+    background-color: rgb(255, 255, 255) !important;
   }
   
   /* =============================================
@@ -475,7 +491,7 @@
     width: 100%;
     padding: 5px !important;
     border-collapse: collapse;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: var(--text-color) !important;
     background-color: var(--background-color) !important;
     margin-bottom: 0 !important;
@@ -644,9 +660,9 @@
   }
   
   .formulario-card {
-    border-radius: 0;
-    border: none;
-    box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0) !important;
+    border-radius: 5px !important;
+    border: 1px solid var(--input-border-color) !important;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, .15) !important;
     overflow: hidden;
     padding: 0;
   }
@@ -654,7 +670,7 @@
   .formulario-card .card-header {
     background-color: rgb(255, 255, 255) !important;
     border: none !important;
-    color: #7079a5 !important;
+    color: #000000 !important;
     font-size: 1.1rem;
     font-weight: bold;
     display: flex;
@@ -667,7 +683,7 @@
   
   .formulario-card .card-header i {
     font-size: 1.1rem;
-    color: #7079a5 !important;
+    color: #000000 !important;
 
   }
   
