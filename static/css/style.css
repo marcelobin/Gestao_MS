@@ -492,7 +492,9 @@
     padding: 5px !important;
     border-collapse: collapse;
     font-size: 0.9rem;
-    color: var(--text-color) !important;
+    font-weight: 400;
+    /*color: var(--text-color) !important;*/
+    color: rgb(20, 91, 146) !important;
     background-color: var(--background-color) !important;
     margin-bottom: 0 !important;
   }
@@ -513,8 +515,8 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    /*background-color: var(--navbar-bg);*/
-    background-color: rgb(175, 175, 175);
+    background-color: rgb(78, 137, 183) !important;
+    /*background-color: rgb(175, 175, 175);*/
     color: var(--table-header-text) !important;
   }
 
@@ -581,7 +583,7 @@
     right: 4px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--sort-icon-color);
+    color: white;
   }
   
   th.sortable.asc::after {
@@ -740,8 +742,15 @@
   .card-title {
     font-size: 1.0rem;
     font-weight: bold;
-    color: black;
+    color: rgb(53, 118, 182) !important;
     padding-bottom: 10px;
+  }
+
+  .titulo-pagina {
+    color: rgb(38, 84, 131) !important;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding-bottom: 0px;
   }
 
   .card-filtro {
